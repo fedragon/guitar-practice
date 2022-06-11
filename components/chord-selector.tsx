@@ -4,7 +4,7 @@ import { Button, ButtonGroup, Stack } from 'react-bootstrap'
 import { AllChords } from '../components/chords'
 import Fretboard from '../components/fretboard'
 
-export function ChordSelector({ onClick, rightSide }) {
+export function ChordSelector({ rightSide }) {
   const [chord, setChord] = useState(AllChords[0])
 
   return (
@@ -17,7 +17,7 @@ export function ChordSelector({ onClick, rightSide }) {
                 key={chord.name}
                 variant={"outline-primary"}
                 size={"sm"}
-                onClick={() => { setChord(chord); onClick() }}>
+                onClick={() => setChord(chord)}>
                 {chord.name}
               </Button>
             )
