@@ -5,9 +5,9 @@ export default function Guitar({
     name: string,
     startingFret: number,
     strings: {
-      gstring: number,
-      fret: number,
-      strum?: boolean
+      gstring: number, // 1 = high E, 6 = low E
+      fret: number,    // relative to startingFret
+      strum?: boolean  // strum an open string?
     }[]
   }
 }) {
