@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Chords } from '../components/chords'
+import { AllChords } from '../components/chords'
 import Guitar from '../components/guitar'
 import Layout from '../components/layout'
 
 export default function Home() {
-  const [chord, setChord] = useState(Chords[0])
+  const [chord, setChord] = useState(AllChords[0])
   const [isTimerActive, setTimer] = useState(false)
   const [timeLeft, setTimeLeft] = useState(60)
 
@@ -31,7 +31,7 @@ export default function Home() {
 
   return (
     <Layout home>
-      {Chords.map(function (chord) {
+      {AllChords.map(function (chord) {
         return (
           [
             <button key={chord.name} onClick={() => { setChord(chord); resetTimer() }}>{chord.name}</button>,
