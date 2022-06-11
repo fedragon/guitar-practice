@@ -4,7 +4,7 @@ import { faPause, faPlay, faStop } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState } from 'react'
 import { Button, ButtonGroup, Container, Stack } from 'react-bootstrap'
 import { AllChords } from '../components/chords'
-import Guitar from '../components/guitar'
+import Fretboard from '../components/fretboard'
 
 export default function ChordPerfect() {
   const [chord, setChord] = useState(AllChords[0])
@@ -43,21 +43,25 @@ export default function ChordPerfect() {
           })}
         </ButtonGroup>
       </Stack>
-      <Guitar key={"guitar"} chord={chord} />
-      <Stack direction={"horizontal"} gap={1}>
+      <Stack direction={"horizontal"} gap={3}>
+        <Fretboard key={"fretboard"} config={{ base: 45 }} chord={chord} />
         <Stack>
-          <div key={"timeLeftLabel"}>Time left</div>
-          <div key={"timeLeft"} style={{ fontSize: 48 }}>{timeLeft}</div>
+          <Stack>
+            <div key={"timeLeftLabel"}>Time left</div>
+            <div key={"timeLeft"} style={{ fontSize: 48 }}>{timeLeft}</div>
+            <Stack direction={"horizontal"} gap={1}>
+              <Button key={"play"} onClick={() => { setTimer(true) }} disabled={isTimerActive}>
+                <FontAwesomeIcon icon={faPlay} />
+              </Button>
+              <Button key={"pause"} onClick={() => { setTimer(false) }} disabled={!isTimerActive}>
+                <FontAwesomeIcon icon={faPause} />
+              </Button>
+              <Button key={"stop"} onClick={() => { resetTimer() }}>
+                <FontAwesomeIcon icon={faStop} />
+              </Button>
+            </Stack>
+          </Stack>
         </Stack>
-        <Button key={"play"} onClick={() => { setTimer(true) }} disabled={isTimerActive}>
-          <FontAwesomeIcon icon={faPlay} />
-        </Button>
-        <Button key={"pause"} onClick={() => { setTimer(false) }} disabled={!isTimerActive}>
-          <FontAwesomeIcon icon={faPause} />
-        </Button>
-        <Button key={"stop"} onClick={() => { resetTimer() }}>
-          <FontAwesomeIcon icon={faStop} />
-        </Button>
       </Stack>
     </Stack>
   )
