@@ -48,7 +48,7 @@ export default function ChordPerfect() {
         <Stack>
           <Stack>
             <div key={"timeLeftLabel"}>Time left</div>
-            <div key={"timeLeft"} style={{ fontSize: 48 }}>{timeLeft}</div>
+            <div key={"timeLeft"} style={{ fontSize: 48 }}>{timeLeft}s</div>
             <Stack direction={"horizontal"} gap={1}>
               <Button key={"play"} onClick={() => { setTimer(true) }} disabled={isTimerActive}>
                 <FontAwesomeIcon icon={faPlay} />

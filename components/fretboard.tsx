@@ -8,6 +8,11 @@ export default function Guitar({
   chord: {
     name: string,
     startingFret: number,
+    barre?: {
+      fret: number,
+      fromString: number,
+      toString: number,
+    },
     strings: {
       gstring: number, // 1 = high E, 6 = low E
       fret: number,    // relative to startingFret
@@ -52,6 +57,18 @@ export default function Guitar({
 
       {/* chord name */}
       <text x={off / 2 + width / 2} y={off / 2} fontSize={chordNameFontSize} stroke={"black"} fill={"black"}>{chord.name}</text>
+
+      {chord.barre &&
+        <rect
+          x={off + base / 1.5}
+          y={base * chord.barre.fromString}
+          width={base / 1.5}
+          height={(base * chord.barre.toString - base * chord.barre.fromString) * 1.125}
+          rx={15}
+          ry={15}
+          stroke={"black"}
+          strokeWidth={2}
+          fill={"green"} />}
 
       {chord.strings.map(function (row: { gstring: number, fret: number, strum?: boolean }) {
         let gstring = row.gstring - 1

@@ -25,23 +25,29 @@ export const AllChords = [
   {
     name: "B",
     startingFret: 2,
+    barre: {
+      fret: 2,
+      fromString: 1,
+      toString: 5,
+    },
     strings: [
-      { gstring: 1, fret: 1 },
       { gstring: 2, fret: 3 },
       { gstring: 3, fret: 3 },
       { gstring: 4, fret: 3 },
-      { gstring: 5, fret: 1 },
       { gstring: 6, fret: 0, strum: false }
     ],
   }, {
     name: "Bm",
     startingFret: 2,
+    barre: {
+      fret: 2,
+      fromString: 1,
+      toString: 5,
+    },
     strings: [
-      { gstring: 1, fret: 1 },
       { gstring: 2, fret: 2 },
       { gstring: 3, fret: 3 },
       { gstring: 4, fret: 3 },
-      { gstring: 5, fret: 1 },
       { gstring: 6, fret: 0, strum: false }
     ],
   },
@@ -60,12 +66,15 @@ export const AllChords = [
   {
     name: "Cm",
     startingFret: 3,
+    barre: {
+      fret: 3,
+      fromString: 1,
+      toString: 5,
+    },
     strings: [
-      { gstring: 1, fret: 1 },
       { gstring: 2, fret: 2 },
       { gstring: 3, fret: 3 },
       { gstring: 4, fret: 3 },
-      { gstring: 5, fret: 1 },
       { gstring: 6, fret: 0, strum: false }
     ],
   },
@@ -120,25 +129,28 @@ export const AllChords = [
   {
     name: "F",
     startingFret: 1,
+    barre: {
+      fret: 1,
+      fromString: 1,
+      toString: 6,
+    },
     strings: [
-      { gstring: 1, fret: 1 },
-      { gstring: 2, fret: 1 },
       { gstring: 3, fret: 2 },
       { gstring: 4, fret: 3 },
       { gstring: 5, fret: 3 },
-      { gstring: 6, fret: 1 }
     ],
   },
   {
     name: "Fm",
     startingFret: 1,
+    barre: {
+      fret: 1,
+      fromString: 1,
+      toString: 6,
+    },
     strings: [
-      { gstring: 1, fret: 1 },
-      { gstring: 2, fret: 1 },
-      { gstring: 3, fret: 1 },
       { gstring: 4, fret: 3 },
       { gstring: 5, fret: 3 },
-      { gstring: 6, fret: 1 }
     ],
   },
   {
@@ -156,13 +168,14 @@ export const AllChords = [
   {
     name: "Gm",
     startingFret: 3,
+    barre: {
+      fret: 3,
+      fromString: 1,
+      toString: 6,
+    },
     strings: [
-      { gstring: 1, fret: 1 },
-      { gstring: 2, fret: 1 },
-      { gstring: 3, fret: 1 },
       { gstring: 4, fret: 3 },
       { gstring: 5, fret: 3 },
-      { gstring: 6, fret: 1 }
     ],
   },
 ]
