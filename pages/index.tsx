@@ -10,19 +10,23 @@ export default function Home() {
 
   useEffect(() => {
     if (isTimerActive && timeLeft > 0) {
-      const timer = setTimeout(() => {
+      let timer = setTimeout(() => {
         setTimeLeft(timeLeft - 1)
       }, 1000)
 
       return () => clearTimeout(timer)
     } else {
-      setTimer(false)
-      setTimeLeft(60)
+      resetTimer()
     }
-  })
+  }, [isTimerActive])
 
   let toggleTimer = function () {
     setTimer(!isTimerActive)
+  }
+
+  let resetTimer = function () {
+    setTimer(false)
+    setTimeLeft(60)
   }
 
   return (
@@ -30,7 +34,7 @@ export default function Home() {
       {Chords.map(function (chord) {
         return (
           [
-            <button key={chord.name} onClick={() => { setChord(chord) }}>{chord.name}</button>,
+            <button key={chord.name} onClick={() => { setChord(chord); resetTimer() }}>{chord.name}</button>,
             <span>&nbsp;</span>
           ]
         )
