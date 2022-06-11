@@ -27,7 +27,10 @@ export default function Home() {
     <Layout home>
       {Chords.map(function (chord) {
         return (
-          <button key={chord.name} onClick={() => { setChord(chord) }}>{chord.name}</button>
+          [
+            <button key={chord.name} onClick={() => { setChord(chord) }}>{chord.name}</button>,
+            <span>&nbsp;</span>
+          ]
         )
       })}
       <Guitar key={"guitar"} chord={chord} />

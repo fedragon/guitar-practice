@@ -16,6 +16,10 @@ export default function Guitar({
   let width = base * 8
   let height = base * 5
 
+  let cx3rdFret = xoff + base * (3 + 1) + base * (3 - 2)
+  let cy3rdFret = yoff + base * 2.5
+  let radius3rdFret = 12.5
+
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 700" >
       {/* nut */}
@@ -35,6 +39,10 @@ export default function Guitar({
       <line x1={xoff} y1={yoff + base * 4} x2={xoff + width} y2={yoff + base * 4} stroke={"black"} strokeWidth={2} />
       <line x1={xoff} y1={yoff + height} x2={xoff + width} y2={yoff + height} stroke={"black"} strokeWidth={2} />
 
+      {/* 3rd fret dot */}
+      <circle cx={cx3rdFret} cy={cy3rdFret} r={radius3rdFret} stroke={"grey"} strokeWidth={1} fill={"grey"} />
+
+      {/* chord name */}
       <text x={xoff / 2 + width / 2} y={yoff / 2} fontSize={36} stroke={"black"} fill={"black"}>{chord.name}</text>
 
       {chord.strings.map(function (row: { gstring: number, fret: number, strum?: boolean }) {
