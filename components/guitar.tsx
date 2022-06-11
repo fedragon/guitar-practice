@@ -35,7 +35,7 @@ export default function Guitar({
       <line x1={xoff} y1={yoff + base * 4} x2={xoff + width} y2={yoff + base * 4} stroke={"black"} strokeWidth={2} />
       <line x1={xoff} y1={yoff + height} x2={xoff + width} y2={yoff + height} stroke={"black"} strokeWidth={2} />
 
-      <text x={xoff / 2 + width / 2} y={yoff / 2} fontSize={50} stroke={"black"} fill={"black"}>{chord.name}</text>
+      <text x={xoff / 2 + width / 2} y={yoff / 2} fontSize={36} stroke={"black"} fill={"black"}>{chord.name}</text>
 
       {chord.strings.map(function (row: { gstring: number, fret: number, strum?: boolean }) {
         let gstring = row.gstring - 1
@@ -48,7 +48,7 @@ export default function Guitar({
 
           if (row.fret == 0) {
             fill = "white"
-            radius = base / 3
+            radius = base / 4
           } else if (row.fret == 1) {
             cx = xoff + base
           } else if (row.fret > 1) {
@@ -57,10 +57,10 @@ export default function Guitar({
 
           return (<circle cx={cx} cy={cy} r={radius} stroke={"black"} strokeWidth={2} fill={fill} />)
         } else {
-          let x = base / 1.5
-          let y1 = yoff + base * gstring * 1.05
-          let y2 = yoff + base * gstring * 0.95
-          let off = 10
+          let x = base / 2
+          let y1 = yoff * 1.15 + base * gstring
+          let y2 = yoff * 0.75 + base * gstring
+          let off = 15
 
           return (
             [
