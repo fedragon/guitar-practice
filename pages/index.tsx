@@ -13,6 +13,8 @@ export default function Home() {
       const timer = setTimeout(() => {
         setTimeLeft(timeLeft - 1)
       }, 1000)
+
+      return () => clearTimeout(timer)
     } else {
       setTimer(false)
       setTimeLeft(60)
@@ -36,7 +38,7 @@ export default function Home() {
       <Guitar key={"guitar"} chord={chord} />
       <div key={"timeLeft"} style={{ fontSize: 36 }}>Time left: {timeLeft}</div>
       <button key={"startstop"} onClick={() => { toggleTimer() }}>
-        {isTimerActive ? "Resume" : "Start"}
+        {isTimerActive ? "Pause" : "Resume"}
       </button>
     </Layout>
   )
