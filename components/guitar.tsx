@@ -1,11 +1,18 @@
 export default function Guitar({
   chord
 }: {
-  chord: [number, number, boolean][]
+  chord: {
+    name: string,
+    strings: {
+      gstring: number,
+      fret: number,
+      strum?: boolean
+    }[]
+  }
 }) {
   let base = 75
   let xoff = base + 25
-  let yoff = 50
+  let yoff = xoff
   let width = base * 8
   let height = base * 5
 
@@ -28,24 +35,24 @@ export default function Guitar({
       <line x1={xoff} y1={yoff + base * 4} x2={xoff + width} y2={yoff + base * 4} stroke={"black"} strokeWidth={2} />
       <line x1={xoff} y1={yoff + height} x2={xoff + width} y2={yoff + height} stroke={"black"} strokeWidth={2} />
 
-      {chord.map(function (row: [number, number, boolean]) {
-        const [fret, str, strum] = row
+      <text x={xoff / 2 + width / 2} y={yoff / 2} fontSize={50} stroke={"black"} fill={"black"}>{chord.name}</text>
 
-        let gstring = str - 1
+      {chord.strings.map(function (row: { gstring: number, fret: number, strum?: boolean }) {
+        let gstring = row.gstring - 1
 
-        if (strum) {
+        if (row.strum ?? true) {
           let cx = xoff / 3
           let cy = yoff + base * gstring
           let radius = base / 3
-          let fill = "red"
+          let fill = "green"
 
-          if (fret == 0) {
+          if (row.fret == 0) {
             fill = "white"
             radius = base / 3
-          } else if (fret == 1) {
+          } else if (row.fret == 1) {
             cx = xoff + base
-          } else if (fret > 1) {
-            cx = xoff + base * (fret + 1) + base * (fret - 2)
+          } else if (row.fret > 1) {
+            cx = xoff + base * (row.fret + 1) + base * (row.fret - 2)
           }
 
           return (<circle cx={cx} cy={cy} r={radius} stroke={"black"} strokeWidth={2} fill={fill} />)
@@ -53,11 +60,12 @@ export default function Guitar({
           let x = base / 1.5
           let y1 = yoff + base * gstring * 1.05
           let y2 = yoff + base * gstring * 0.95
+          let off = 10
 
           return (
             [
-              <line x1={10} y1={y1} x2={x + 10} y2={y2} stroke={"black"} strokeWidth={3} />,
-              <line x1={x + 10} y1={y1} x2={10} y2={y2} stroke={"black"} strokeWidth={3} />
+              <line x1={off} y1={y1} x2={x + off} y2={y2} stroke={"black"} strokeWidth={2} />,
+              <line x1={x + off} y1={y1} x2={off} y2={y2} stroke={"black"} strokeWidth={2} />
             ]
           )
         }
