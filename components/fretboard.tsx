@@ -1,25 +1,25 @@
 export default function Fretboard({
   config,
-  chord
+  notes,
 }: {
   config: {
     fretWidth: number,    // width of each fret, in pixels
     fretsNumber?: number, // number of frets to draw
   },
-  chord: {
+  notes?: {
     name: string,
-    startingFret: number,
+    startingFret?: number,
     barre?: {
       fret: number,
       fromString: number,
       toString: number,
     },
-    strings: {
+    positions: {
       gstring: number, // 1 = high E, 6 = low E
       fret: number,    // relative to startingFret
       strum?: boolean  // strum an open string?
     }[]
-  }
+  },
 }) {
   let base = config.fretWidth / 2
   let numFrets = config.fretsNumber ?? 4
@@ -43,7 +43,7 @@ export default function Fretboard({
 
       {drawStrings(offset, base, width)}
 
-      {drawChord(numFrets, chord, offset, base, width)}
+      {notes && placeNotes(numFrets, notes, offset, base, width)}
     </svg>
   )
 }
@@ -88,17 +88,17 @@ function drawStrings(off: number, base: number, width: number) {
   return content
 }
 
-function drawChord(
+function placeNotes(
   numFrets: number,
-  chord: {
+  notes: {
     name: string,
-    startingFret: number,
+    startingFret?: number,
     barre?: {
       fret: number,
       fromString: number,
       toString: number,
     },
-    strings: {
+    positions: {
       gstring: number,
       fret: number,
       strum?: boolean
@@ -108,44 +108,42 @@ function drawChord(
   base: number,
   width: number,
 ) {
-  let chordNameFontSize = base / 2
-  let startingFretFontSize = base / 3
   let content = []
 
   content.push(
     <text
-      key={"chord-name"}
+      key={"notes-name"}
       x={offset / 2 + width / 2}
       y={offset / 2}
-      fontSize={chordNameFontSize}
+      fontSize={base /2 }
       stroke={"black"}
       fill={"black"}>
-      {chord.name}
+      {notes.name}
     </text>
   )
 
-  if (chord.startingFret > 1) {
+  if (notes.startingFret ?? 1 > 1) {
     content.push(
       <text
-        key={"chord-startfret"}
+        key={"notes-startfret"}
         x={offset}
         y={offset / 2}
-        fontSize={startingFretFontSize}
+        fontSize={base / 3}
         stroke={"black"}>
-        {chord.startingFret}fr
+        {notes.startingFret}fr
       </text>
     )
   }
 
-  if (chord.barre) {
+  if (notes.barre) {
     let w = width / numFrets / 2
-    let height = (base * chord.barre.toString - base * chord.barre.fromString) * 1.125
+    let height = (base * notes.barre.toString - base * notes.barre.fromString) * 1.125
 
     content.push(
       <rect
-        key={"chord-barre"}
+        key={"notes-barre"}
         x={offset + w / 2}
-        y={base * chord.barre.fromString - 10}
+        y={base * notes.barre.fromString - 10}
         width={w}
         height={height}
         rx={15}
@@ -157,7 +155,7 @@ function drawChord(
   }
 
   return content.concat(
-    chord.strings.map(
+    notes.positions.map(
       function (row: { gstring: number, fret: number, strum?: boolean }) {
         let gstring = row.gstring - 1
         let x = width / numFrets
@@ -180,7 +178,7 @@ function drawChord(
 
           return (
             <circle
-              key={"chord-dot-cx" + cx + "cy" + cy}
+              key={"notes-dot-cx" + cx + "cy" + cy}
               cx={cx}
               cy={cy}
               r={radius}
@@ -197,7 +195,7 @@ function drawChord(
           return (
             [
               <line
-                key={"chord-x-line-1"}
+                key={"notes-x-line-1"}
                 x1={x1}
                 y1={y1}
                 x2={x2}
@@ -206,7 +204,7 @@ function drawChord(
                 strokeWidth={2}
               />,
               <line
-                key={"chord-x-line-2"}
+                key={"notes-x-line-2"}
                 x1={x2}
                 y1={y1}
                 x2={x1}
@@ -217,5 +215,7 @@ function drawChord(
             ]
           )
         }
-      }))
+      }
+    )
+  )
 }

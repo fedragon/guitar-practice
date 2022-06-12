@@ -2,7 +2,7 @@ export const AllChords = [
   {
     name: "A",
     startingFret: 1,
-    strings: [
+    positions: [
       { gstring: 1, fret: 0 },
       { gstring: 2, fret: 2 },
       { gstring: 3, fret: 2 },
@@ -13,7 +13,7 @@ export const AllChords = [
   }, {
     name: "Am",
     startingFret: 1,
-    strings: [
+    positions: [
       { gstring: 1, fret: 0 },
       { gstring: 2, fret: 1 },
       { gstring: 3, fret: 2 },
@@ -30,7 +30,7 @@ export const AllChords = [
       fromString: 1,
       toString: 5,
     },
-    strings: [
+    positions: [
       { gstring: 2, fret: 3 },
       { gstring: 3, fret: 3 },
       { gstring: 4, fret: 3 },
@@ -44,7 +44,7 @@ export const AllChords = [
       fromString: 1,
       toString: 5,
     },
-    strings: [
+    positions: [
       { gstring: 2, fret: 2 },
       { gstring: 3, fret: 3 },
       { gstring: 4, fret: 3 },
@@ -54,7 +54,7 @@ export const AllChords = [
   {
     name: "C",
     startingFret: 1,
-    strings: [
+    positions: [
       { gstring: 1, fret: 0 },
       { gstring: 2, fret: 1 },
       { gstring: 3, fret: 0 },
@@ -71,7 +71,7 @@ export const AllChords = [
       fromString: 1,
       toString: 5,
     },
-    strings: [
+    positions: [
       { gstring: 2, fret: 2 },
       { gstring: 3, fret: 3 },
       { gstring: 4, fret: 3 },
@@ -81,7 +81,7 @@ export const AllChords = [
   {
     name: "D",
     startingFret: 1,
-    strings: [
+    positions: [
       { gstring: 1, fret: 2 },
       { gstring: 2, fret: 3 },
       { gstring: 3, fret: 2 },
@@ -93,7 +93,7 @@ export const AllChords = [
   {
     name: "Dm",
     startingFret: 1,
-    strings: [
+    positions: [
       { gstring: 1, fret: 1 },
       { gstring: 2, fret: 3 },
       { gstring: 3, fret: 2 },
@@ -105,7 +105,7 @@ export const AllChords = [
   {
     name: "E",
     startingFret: 1,
-    strings: [
+    positions: [
       { gstring: 1, fret: 0 },
       { gstring: 2, fret: 0 },
       { gstring: 3, fret: 1 },
@@ -117,7 +117,7 @@ export const AllChords = [
   {
     name: "Em",
     startingFret: 1,
-    strings: [
+    positions: [
       { gstring: 1, fret: 0 },
       { gstring: 2, fret: 0 },
       { gstring: 3, fret: 0 },
@@ -134,7 +134,7 @@ export const AllChords = [
       fromString: 1,
       toString: 6,
     },
-    strings: [
+    positions: [
       { gstring: 3, fret: 2 },
       { gstring: 4, fret: 3 },
       { gstring: 5, fret: 3 },
@@ -148,7 +148,7 @@ export const AllChords = [
       fromString: 1,
       toString: 6,
     },
-    strings: [
+    positions: [
       { gstring: 4, fret: 3 },
       { gstring: 5, fret: 3 },
     ],
@@ -156,7 +156,7 @@ export const AllChords = [
   {
     name: "G",
     startingFret: 1,
-    strings: [
+    positions: [
       { gstring: 1, fret: 3 },
       { gstring: 2, fret: 0 },
       { gstring: 3, fret: 0 },
@@ -173,7 +173,7 @@ export const AllChords = [
       fromString: 1,
       toString: 6,
     },
-    strings: [
+    positions: [
       { gstring: 4, fret: 3 },
       { gstring: 5, fret: 3 },
     ],

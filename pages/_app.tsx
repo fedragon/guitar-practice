@@ -11,6 +11,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <Nav className={"me-auto"}>
             <Nav.Link href="/chord-perfect">Chord Perfect</Nav.Link>
             <Nav.Link href="/chord-switch">Chord Switch</Nav.Link>
+            <Nav.Link href="/note-positions">Note Positions</Nav.Link>
           </Nav>
         </Container>
       </Navbar>
