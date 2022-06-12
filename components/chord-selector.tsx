@@ -4,7 +4,11 @@ import { Button, ButtonGroup, Stack } from 'react-bootstrap'
 import { AllChords } from '../components/chords'
 import Fretboard from '../components/fretboard'
 
-export function ChordSelector({ rightSide }: { rightSide?: JSX.Element }) {
+export function ChordSelector({
+  rightSide
+}: {
+  rightSide?: JSX.Element // optional JSX Element which will be rendered on the right side of the chord selector
+}) {
   const [chord, setChord] = useState(AllChords[0])
 
   return (
@@ -25,7 +29,7 @@ export function ChordSelector({ rightSide }: { rightSide?: JSX.Element }) {
         </ButtonGroup>
       </Stack>
       <Stack direction={"horizontal"} gap={3}>
-        <Fretboard key={"fretboard"} config={{ base: 45 }} chord={chord} />
+        <Fretboard key={"fretboard"} config={{ fretWidth: 90, fretsNumber: 4 }} chord={chord} />
         {rightSide}
       </Stack>
     </Stack>
