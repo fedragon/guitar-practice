@@ -39,7 +39,7 @@ export default function Fretboard({
         stroke={"black"}
         strokeWidth={5} />
 
-      {drawFrets(numFrets, offset, width, height)}
+      {drawFrets(numFrets, notes.startingFret ?? 1, offset, width, height)}
 
       {drawStrings(offset, base, width)}
 
@@ -48,11 +48,49 @@ export default function Fretboard({
   )
 }
 
-function drawFrets(frets: number, offset: number, width: number, height: number) {
+function drawFrets(numFrets: number, startingFret: number, offset: number, width: number, height: number) {
   let content = []
 
-  for (let index = 1; index < frets + 1; index++) {
-    let x = offset + width / frets * index
+  for (let index = 1; index < numFrets + 1; index++) {
+    let start = startingFret + index - 1
+    let x = offset + width / numFrets * index
+
+    if (start % 2 == 1 && start > 1 && start < 11) {
+      let cx = x - width / numFrets / 2
+      let cy = height / 6
+      content.push(
+        <circle
+          key={"fret-dot-cx" + cx + "cy" + cy}
+          cx={cx}
+          cy={offset + cy * 3}
+          r={width / numFrets * 0.15}
+          stroke={"grey"}
+          strokeWidth={2}
+          fill={"grey"} />
+      )
+    } else if (start == 12) {
+      let cx = x - width / numFrets / 2
+      let cy = height / 6
+
+      content.push(
+        <circle
+          key={"fret-dot-cx" + cx + "cy" + cy}
+          cx={cx}
+          cy={offset + cy * 1.75}
+          r={width / numFrets * 0.15}
+          stroke={"grey"}
+          strokeWidth={2}
+          fill={"grey"} />,
+        <circle
+          key={"fret-dot-cx" + cx + "cy" + cy}
+          cx={cx}
+          cy={offset + cy * 4.25}
+          r={width / numFrets * 0.15}
+          stroke={"grey"}
+          strokeWidth={2}
+          fill={"grey"} />
+      )
+    }
 
     content.push(
       <line
@@ -115,14 +153,14 @@ function placeNotes(
       key={"notes-name"}
       x={offset / 2 + width / 2}
       y={offset / 2}
-      fontSize={base /2 }
+      fontSize={base / 2}
       stroke={"black"}
       fill={"black"}>
       {notes.name}
     </text>
   )
 
-  if (notes.startingFret ?? 1 > 1) {
+  if ((notes.startingFret ?? 1) > 1) {
     content.push(
       <text
         key={"notes-startfret"}
