@@ -4,7 +4,7 @@ import { Button, ButtonGroup, Stack } from 'react-bootstrap'
 import { AllChords } from '../components/chords'
 import Fretboard from '../components/fretboard'
 
-export function ChordSelector({ rightSide }) {
+export function ChordSelector({ rightSide }: { rightSide?: JSX.Element }) {
   const [chord, setChord] = useState(AllChords[0])
 
   return (

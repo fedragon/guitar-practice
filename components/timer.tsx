@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useEffect, useState } from "react"
 import { Button, Stack } from "react-bootstrap"
 
-export function Timer({ time }) {
+export function Timer({ time }: { time: number }) {
   const [isTimerActive, setTimer] = useState(false)
   const [timeLeft, setTimeLeft] = useState(time)
 
