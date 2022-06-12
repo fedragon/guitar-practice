@@ -1,9 +1,10 @@
-export default function Guitar({
+export default function Fretboard({
   config,
   chord
 }: {
   config: {
-    base: number, // base value (in pixel) used to keep fretboard proportional
+    base: number,  // base value (in pixel) used to keep fretboard proportional
+    frets?: number, // number of frets to draw
   },
   chord: {
     name: string,
@@ -21,88 +22,194 @@ export default function Guitar({
   }
 }) {
   let base = config.base
-  let off = base * 1.3
+  let numFrets = config.frets ?? 4
+
+  let offset = base * 1.25
   let width = base * 8
   let height = base * 5
-  let chordNameFontSize = base / 2
-  let startingFretFontSize = base / 3
 
   return (
-    <svg xmlns={"http://www.w3.org/2000/svg"} width={off * 2 + width} height={off * 2 + height}>
-      {/* nut */}
-      <line x1={off} y1={off} x2={off} y2={off + height} stroke={"black"} strokeWidth={10} />
+    <svg key={"fretboard"} xmlns={"http://www.w3.org/2000/svg"} width={offset * 2 + width} height={offset * 2 + height}>
+      <line
+        key={"fretboard-nut"}
+        x1={offset}
+        y1={offset}
+        x2={offset}
+        y2={offset + height}
+        stroke={"black"}
+        strokeWidth={10} />
 
-      {/* frets */}
-      <line x1={off + width / 4} y1={off} x2={off + width / 4} y2={off + height} stroke={"black"} strokeWidth={2} />
-      <line x1={off + width / 2} y1={off} x2={off + width / 2} y2={off + height} stroke={"black"} strokeWidth={2} />
-      <line x1={off + width / 4 * 3} y1={off} x2={off + width / 4 * 3} y2={off + height} stroke={"black"} strokeWidth={2} />
-      <line x1={off + width} y1={off} x2={off + width} y2={off + height} stroke={"black"} strokeWidth={2} />
+      {drawFrets(numFrets, offset, width, height)}
 
-      {chord.startingFret > 1 &&
-        <text
-          x={off + base - 10}
-          y={off / 2}
-          fontSize={startingFretFontSize}
-          stroke={"black"}>
-          {chord.startingFret}fr
-        </text>}
+      {drawStrings(offset, base, width)}
 
-      {/* strings */}
-      <line x1={off} y1={off} x2={off + width} y2={off} stroke={"black"} strokeWidth={2} />
-      <line x1={off} y1={off + base} x2={off + width} y2={off + base} stroke={"black"} strokeWidth={2} />
-      <line x1={off} y1={off + base * 2} x2={off + width} y2={off + base * 2} stroke={"black"} strokeWidth={2} />
-      <line x1={off} y1={off + base * 3} x2={off + width} y2={off + base * 3} stroke={"black"} strokeWidth={2} />
-      <line x1={off} y1={off + base * 4} x2={off + width} y2={off + base * 4} stroke={"black"} strokeWidth={2} />
-      <line x1={off} y1={off + height} x2={off + width} y2={off + height} stroke={"black"} strokeWidth={2} />
+      {drawChord(numFrets, chord, offset, base, width)}
+    </svg>
+  )
+}
 
-      {/* chord name */}
-      <text x={off / 2 + width / 2} y={off / 2} fontSize={chordNameFontSize} stroke={"black"} fill={"black"}>{chord.name}</text>
+function drawFrets(frets: number, offset: number, width: number, height: number) {
+  let content = []
+  for (let index = 1; index < frets + 1; index++) {
+    let x = offset + width / frets * index
 
-      {chord.barre &&
-        <rect
-          x={off + base / 1.5}
-          y={base * chord.barre.fromString}
-          width={base / 1.5}
-          height={(base * chord.barre.toString - base * chord.barre.fromString) * 1.125}
-          rx={15}
-          ry={15}
-          stroke={"black"}
-          strokeWidth={2}
-          fill={"green"} />}
+    content.push(
+      <line
+        key={"fret-" + index}
+        x1={x}
+        y1={offset}
+        x2={x}
+        y2={offset + height}
+        stroke={"black"}
+        strokeWidth={2} />
+    )
+  }
 
-      {chord.strings.map(function (row: { gstring: number, fret: number, strum?: boolean }) {
+  return content
+}
+
+function drawStrings(off: number, base: number, width: number) {
+  let content = []
+  for (let index = 0; index < 6; index++) {
+    content.push(
+      <line
+        key={"fretboard-string-" + index}
+        x1={off}
+        y1={off + base * index}
+        x2={off + width}
+        y2={off + base * index}
+        stroke={"black"}
+        strokeWidth={2}
+      />
+    )
+  }
+
+  return content
+}
+
+function drawChord(
+  numFrets: number,
+  chord: {
+    name: string,
+    startingFret: number,
+    barre?: {
+      fret: number,
+      fromString: number,
+      toString: number,
+    },
+    strings: {
+      gstring: number,
+      fret: number,
+      strum?: boolean
+    }[]
+  },
+  offset: number,
+  base: number,
+  width: number,
+) {
+  let chordNameFontSize = base / 2
+  let startingFretFontSize = base / 3
+  let content = []
+
+  content.push(
+    <text
+      key={"chord-name"}
+      x={offset / 2 + width / 2}
+      y={offset / 2}
+      fontSize={chordNameFontSize}
+      stroke={"black"}
+      fill={"black"}>
+      {chord.name}
+    </text>
+  )
+
+  if (chord.startingFret > 1) {
+    content.push(
+      <text
+        key={"chord-startfret"}
+        x={offset + base - 10}
+        y={offset / 2}
+        fontSize={startingFretFontSize}
+        stroke={"black"}>
+        {chord.startingFret}fr
+      </text>
+    )
+  }
+
+  if (chord.barre) {
+    content.push(
+      <rect
+        key={"chord-barre"}
+        x={offset + base / 1.5}
+        y={base * chord.barre.fromString}
+        width={base / 1.5}
+        height={(base * chord.barre.toString - base * chord.barre.fromString) * 1.125}
+        rx={15}
+        ry={15}
+        stroke={"black"}
+        strokeWidth={2}
+        fill={"green"} />
+    )
+  }
+
+  return content.concat(
+    chord.strings.map(
+      function (row: { gstring: number, fret: number, strum?: boolean }) {
         let gstring = row.gstring - 1
 
         if (row.strum ?? true) {
-          let cx = off / 3
-          let cy = off + base * gstring
-          let radius = base / 3
+          let cx = offset / (numFrets - 1)
+          let cy = offset + base * gstring
+          let radius = base / (numFrets - 1)
           let fill = "green"
 
           if (row.fret == 0) {
             fill = "white"
-            radius = base / 4
+            radius = base / numFrets
           } else if (row.fret == 1) {
-            cx = off + base
+            cx = offset + base
           } else if (row.fret > 1) {
-            cx = off + base * (row.fret + 1) + base * (row.fret - 2)
+            cx = offset + base * (row.fret * 1.6)
           }
 
-          return (<circle cx={cx} cy={cy} r={radius} stroke={"black"} strokeWidth={2} fill={fill} />)
+          return (
+            <circle
+              key={"chord-dot-cx" + cx + "cy" + cy}
+              cx={cx}
+              cy={cy}
+              r={radius}
+              stroke={"black"}
+              strokeWidth={2}
+              fill={fill} />
+          )
         } else {
-          let x = base / 2
-          let y1 = off * 1.15 + base * gstring
-          let y2 = off * 0.75 + base * gstring
-          let moff = base / 5
+          let x = base / (numFrets / 2)
+          let y1 = offset * 1.15 + base * gstring
+          let y2 = offset * 0.75 + base * gstring
+          let moff = base / (numFrets + 1)
 
           return (
             [
-              <line x1={moff} y1={y1} x2={x + moff} y2={y2} stroke={"black"} strokeWidth={2} />,
-              <line x1={x + moff} y1={y1} x2={moff} y2={y2} stroke={"black"} strokeWidth={2} />
+              <line
+                key={"chord-x-line-1"}
+                x1={moff}
+                y1={y1}
+                x2={x + moff}
+                y2={y2}
+                stroke={"black"}
+                strokeWidth={2}
+              />,
+              <line
+                key={"chord-x-line-2"}
+                x1={x + moff}
+                y1={y1}
+                x2={moff}
+                y2={y2}
+                stroke={"black"}
+                strokeWidth={2}
+              />
             ]
           )
         }
-      })}
-    </svg>
-  )
+      }))
 }
