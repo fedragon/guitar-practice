@@ -1,9 +1,12 @@
-import 'bootstrap/dist/css/bootstrap.css'
+import { Col, Row } from 'react-bootstrap'
 import { ChordSelector } from '../components/chord-selector'
 import { Timer } from '../components/timer'
 
 export default function ChordPerfect() {
   return (
-    <ChordSelector rightSide={<Timer time={60} />} />
+    <Row>
+      <Col><ChordSelector /></Col>
+      <Col><Timer time={60} /></Col>
+    </Row>
   )
 }

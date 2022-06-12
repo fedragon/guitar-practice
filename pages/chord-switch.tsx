@@ -1,12 +1,11 @@
-import 'bootstrap/dist/css/bootstrap.css'
 import { Stack } from 'react-bootstrap'
 import { ChordSelector } from '../components/chord-selector'
 import { Timer } from '../components/timer'
 
-export default function ChordPerfect() {
+export default function ChordSwitch() {
   return (
     <Stack>
-      <Stack direction={"horizontal"} gap={1}>
+      <Stack direction={"horizontal"} gap={3}>
         <ChordSelector />
         <ChordSelector />
       </Stack>
