@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button, ButtonGroup, Stack } from 'react-bootstrap'
-import { AllNotes } from '../components/notes'
+import { AllNotes } from '../lib/notes'
 import Fretboard from '../components/fretboard'
 
 export function NoteSelector() {
