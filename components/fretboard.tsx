@@ -74,7 +74,7 @@ function drawFrets(numFrets: number, startingFret: number, offset: number, width
 
       content.push(
         <circle
-          key={"fret-dot-cx" + cx + "cy" + cy}
+          key={"fret-dot-cx" + cx + "cy" + (cy * 1.75)}
           cx={cx}
           cy={offset + cy * 1.75}
           r={width / numFrets * 0.15}
@@ -82,7 +82,7 @@ function drawFrets(numFrets: number, startingFret: number, offset: number, width
           strokeWidth={2}
           fill={"grey"} />,
         <circle
-          key={"fret-dot-cx" + cx + "cy" + cy}
+          key={"fret-dot-cx" + cx + "cy" + (cy * 4.25)}
           cx={cx}
           cy={offset + cy * 4.25}
           r={width / numFrets * 0.15}
