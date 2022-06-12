@@ -2,16 +2,22 @@ import { faPause, faPlay, faStop } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useEffect, useState } from "react"
 import { Button, Stack } from "react-bootstrap"
+import useSound from "use-sound"
 
 export function Timer({ time }: { time: number }) {
   const [isTimerActive, setTimer] = useState(false)
   const [timeLeft, setTimeLeft] = useState(time)
+  const [play] = useSound('/sounds/tick.mp3')
 
   useEffect(() => {
     if (isTimerActive && timeLeft > 0) {
       let timer = setTimeout(() => {
         setTimeLeft(timeLeft - 1)
       }, 1000)
+
+      if (timeLeft > 0 && timeLeft <= 5) {
+        play()
+      }
 
       return () => clearTimeout(timer)
     }
