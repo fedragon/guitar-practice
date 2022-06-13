@@ -6,7 +6,7 @@ export interface Position {
 
 export interface GroupOfNotes {
     name: string
-    startingFret: number
+    startingFret?: number
     barre?: {
         fret: number,
         fromString: number,
