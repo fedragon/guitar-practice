@@ -3,7 +3,8 @@
     "scripts": {
         "dev": "next dev",
         "build": "next build",
-        "start": "next start"
+        "start": "next start",
+        "test": "npx jest"
     },
     "dependencies": {
         "@fortawesome/free-solid-svg-icons": "^6.1.1",
@@ -19,8 +20,11 @@
         "use-sound": "^4.0.1"
     },
     "devDependencies": {
+        "@types/jest": "^28.1.1",
         "@types/node": "^17.0.41",
         "@types/react": "^18.0.12",
+        "jest": "^28.1.1",
+        "ts-jest": "^28.0.4",
         "typescript": "^4.7.3"
     }
 }
