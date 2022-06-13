@@ -10,6 +10,11 @@ export interface ChordSpec {
 export interface Chord {
   name: string
   startingFret: number
+  barre?: {
+    fret: number,
+    fromString: number,
+    toString: number,
+  }
   positions: {
     gstring: number
     fret: number
@@ -154,5 +159,48 @@ export function Place(
     v = it.next()
   }
 
-  return { name: chordName, startingFret: startFret, positions: positions }
+  return withBarre({ name: chordName, startingFret: startFret, positions: positions })
+}
+
+function withBarre(chord: Chord): Chord {
+  let byFret = new Map<number, number[]>()
+  let minFret = 99
+  chord.positions.forEach(p => {
+    if (p.fret > 0 && p.strum) {
+      let existing = byFret.get(p.fret)
+
+      if (p.fret < minFret) {
+        minFret = p.fret
+      }
+
+      if (existing == undefined) {
+        byFret.set(p.fret, [p.gstring])
+      } else {
+        existing.push(p.gstring)
+      }
+    }
+  })
+
+  console.log('byFret', byFret, 'minFret', minFret)
+
+  let barrePositions = byFret.get(minFret)
+  if (barrePositions.length > 1 && minFret == 1 && byFret.size > 1) {
+    barrePositions.sort()
+
+    let positions = []
+    chord.positions.forEach(p => {
+      if (p.fret != minFret) {
+        positions.push(p)
+      }
+    })
+
+    chord.positions = positions
+    chord.barre = {
+      fret: minFret,
+      fromString: barrePositions[0],
+      toString: barrePositions[barrePositions.length - 1],
+    }
+  }
+
+  return chord
 }

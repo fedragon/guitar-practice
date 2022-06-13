@@ -1,1 +1,3 @@
-This is a starter template for [Learn Next.js](https://nextjs.org/learn).
+# Guitar Practice
+
+A collection of exercises to practice guitar.
