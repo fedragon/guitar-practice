@@ -1,3 +1,5 @@
+import {GroupOfNotes} from "../lib/types";
+
 export default function Fretboard({
   config,
   notes,
@@ -6,20 +8,7 @@ export default function Fretboard({
     fretWidth: number,    // width of each fret, in pixels
     fretsNumber?: number, // number of frets to draw
   },
-  notes?: {
-    name: string,
-    startingFret?: number,
-    barre?: {
-      fret: number,
-      fromString: number,
-      toString: number,
-    },
-    positions: {
-      gstring: number, // 1 = high E, 6 = low E
-      fret: number,    // relative to startingFret
-      strum?: boolean  // strum an open string?
-    }[]
-  },
+  notes?: GroupOfNotes,
 }) {
   let base = config.fretWidth / 2
   let numFrets = config.fretsNumber ?? 4

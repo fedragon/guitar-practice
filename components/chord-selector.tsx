@@ -1,8 +1,9 @@
 import {useEffect, useState} from 'react'
 import {Button, ButtonGroup, Stack} from 'react-bootstrap'
-import {Chord, Major, Minor, Place} from '../lib/chords'
+import {Major, Minor, Place} from '../lib/chords'
 import Fretboard from '../components/fretboard'
 import {AllNotes} from "../lib/notes";
+import {GroupOfNotes} from "../lib/types";
 
 export function ChordSelector() {
   const [note, setNote] = useState("A")
@@ -11,7 +12,7 @@ export function ChordSelector() {
   const [chord, setChord] = useState(Place(note, ["A", "C", "E"], fret, 3))
 
   useEffect(() => {
-    let chord: Chord
+    let chord: GroupOfNotes
 
     if (type === 'major') {
       chord = Place("", Major(note), fret, 3)
@@ -43,7 +44,7 @@ export function ChordSelector() {
       <ButtonGroup>
         <Button
           key={"chord-major"}
-          variant={"outline-secondary"}
+          variant={"outline-primary"}
           size={"sm"}
           active={type === "major"}
           onClick={() => setType("major")}>
@@ -51,7 +52,7 @@ export function ChordSelector() {
         </Button>
         <Button
           key={"chord-minor"}
-          variant={"outline-secondary"}
+          variant={"outline-primary"}
           size={"sm"}
           active={type === "minor"}
           onClick={() => setType("minor")}>
@@ -63,7 +64,7 @@ export function ChordSelector() {
           return (
             <Button
               key={"fret-" + x}
-              variant={"outline-secondary"}
+              variant={"outline-primary"}
               size={"sm"}
               active={fret === x}
               onClick={() => setFret(x)}>

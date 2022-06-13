@@ -1,3 +1,5 @@
+import {Position} from "./types";
+
 const A = {
   name: "A",
   positions: [
@@ -16,12 +18,12 @@ export const AllNotes = [A].concat(
   )
 )
 
-function positionsOf(name: string, offset: number) {
+export function positionsOf(name: string, offset: number): {name: string, positions: Position[]} {
   return {
     name: name,
     positions: A.positions.map(function (row: { gstring: number, fret: number }) {
       let x = row.fret + offset
-      return {gstring: row.gstring, fret: x % 12}
+      return {gstring: row.gstring, fret: (x == 12) ? x : x % 12}
     })
   }
 }
