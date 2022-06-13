@@ -1,34 +1,47 @@
 import { AllNotes } from "./notes"
 
-export const AllChords: {
-  name: string,
-  root: string,
-  type: string,
-}[] = [
-    { name: "A", root: "A", type: "major" },
-    { name: "Am", root: "A", type: "minor" },
-    { name: "B", root: "B", type: "major" },
-    { name: "Bm", root: "B", type: "minor" },
-    { name: "C", root: "C", type: "major" },
-    { name: "Cm", root: "C", type: "minor" },
-    { name: "D", root: "D", type: "major" },
-    { name: "Dm", root: "D", type: "minor" },
-    { name: "E", root: "E", type: "major" },
-    { name: "Em", root: "E", type: "minor" },
-    { name: "F", root: "F", type: "major" },
-    { name: "Fm", root: "F", type: "minor" },
-    { name: "G", root: "G", type: "major" },
-    { name: "Gm", root: "G", type: "minor" },
-  ]
+export interface ChordSpec {
+  name: string
+  startingFret: number
+  root: string
+  type: string
+}
+
+export interface Chord {
+  name: string
+  startingFret: number
+  positions: {
+    gstring: number
+    fret: number
+    strum?: boolean
+  }[]
+}
+
+export const AllChords: ChordSpec[] = [
+  { name: "A", startingFret: 0, root: "A", type: "major" },
+  { name: "Am", startingFret: 0, root: "A", type: "minor" },
+  { name: "B", startingFret: 2, root: "B", type: "major" },
+  { name: "Bm", startingFret: 2, root: "B", type: "minor" },
+  { name: "C", startingFret: 0, root: "C", type: "major" },
+  { name: "Cm", startingFret: 3, root: "C", type: "minor" },
+  { name: "D", startingFret: 0, root: "D", type: "major" },
+  { name: "Dm", startingFret: 0, root: "D", type: "minor" },
+  { name: "E", startingFret: 0, root: "E", type: "major" },
+  { name: "Em", startingFret: 0, root: "E", type: "minor" },
+  { name: "F", startingFret: 1, root: "F", type: "major" },
+  { name: "Fm", startingFret: 1, root: "F", type: "minor" },
+  { name: "G", startingFret: 0, root: "G", type: "major" },
+  { name: "Gm", startingFret: 3, root: "G", type: "minor" },
+]
 
 const notes = AllNotes.map(n => n.name)
-const strings = [
-  notesFor("E"),
-  notesFor("B"),
-  notesFor("G"),
-  notesFor("D"),
-  notesFor("A"),
-  notesFor("E"),
+const lowToHigh = [
+  { name: "E", notes: notesFor("E") },
+  { name: "A", notes: notesFor("A") },
+  { name: "D", notes: notesFor("D") },
+  { name: "G", notes: notesFor("G") },
+  { name: "B", notes: notesFor("B") },
+  { name: "e", notes: notesFor("E") },
 ]
 
 function notesFor(note: string) {
@@ -69,58 +82,77 @@ export function Minor(name: string) {
   return [root, minor3rd, major3rd].map(ix => notes[ix])
 }
 
-export function Place(chord: string[], startFret: number, numFrets: number) {
-  let res = new Map<number, { gstring: number, fret: number, strum?: boolean }>()
-  let positions = []
+export function Place(
+  chordName: string,
+  chordNotes: string[],
+  startFret: number,
+  numFrets: number
+): Chord {
+  let res = new Map()
+    .set("E", { gstring: 0, fret: 0, strum: false })
+    .set("A", { gstring: 1, fret: 0, strum: false })
+    .set("D", { gstring: 2, fret: 0, strum: false })
+    .set("G", { gstring: 3, fret: 0, strum: false })
+    .set("B", { gstring: 4, fret: 0, strum: false })
+    .set("e", { gstring: 5, fret: 0, strum: false })
 
-  let assignRoot = function (root: string, xs: string[][]) {
-    for (let ix = 0; ix < xs.length; ix++) {
-      let s = xs[ix]
-      let pos = s.indexOf(root)
+  console.log('chord notes', chordNotes)
 
-      if (pos <= startFret + numFrets) {
-        return { gstring: 6 - ix, fret: pos }
-      }
-    }
+  let findNote = function (note: string, startingFret: number, offsetIx: number, strings: { name: string, notes: string[] }[]): number {
+    let stringIx = -1
+    for (let ix = 0; ix < strings.length; ix++) {
+      let s = strings[ix]
+      let pos = s.notes.indexOf(note)
 
-    return {}
-  }
-
-  let root = assignRoot(chord[0], strings.slice().reverse())
-  console.log('root.gstring', root.gstring)
-
-  if (root.gstring !== undefined) {
-    strings.slice(0, root.gstring - 1).forEach((s, ix) => {
-      res.set(ix + 1, { gstring: ix + 1, fret: 0, strum: false })
-    })
-    res.set(root.gstring, { gstring: root.gstring, fret: root.fret })
-
-    strings.slice(0, root.gstring - 1).forEach((s, ix) => {
-      let gstring = ix + 1
-
-      for (let j = 0; j < chord.length; j++) {
-        let note = chord[j]
-        let pos = s.indexOf(note)
-
-        console.log('string', s, 'note', note, 'pos', pos)
-
-        if (pos <= startFret + numFrets) {
-          res.set(gstring, { gstring: gstring, fret: pos })
-          break
+      if (res.has(s.name)) {
+        if (res.get(s.name).strum ?? false) {
+          console.log('already assigned, skipping', offsetIx + ix, note, s, res.get(offsetIx + ix))
+          continue
         }
       }
-    })
 
-    console.log('result', res)
-
-    let it = res.values()
-    let v = it.next()
-    while (!v.done) {
-      positions.push(v.value)
-      v = it.next()
+      if (pos >= startingFret && pos <= startingFret + numFrets) {
+        if (stringIx == -1) {
+          stringIx = offsetIx + ix
+        }
+        res.set(s.name, { gstring: offsetIx + ix, fret: pos, strum: true })
+        console.log('findNote', note, 's', s, 'string.ix', ix, 'final.ix', (offsetIx + ix), 'pos', pos, 'result', res)
+      }
     }
+
+    return stringIx
   }
 
+  let rootIndex = findNote(chordNotes[0], startFret, 0, lowToHigh)
+  console.log('root.gstring', rootIndex)
 
-  return positions
+  if (rootIndex == -1) {
+    console.log('root not found', chordNotes[0])
+    return Place(chordName, chordNotes, startFret + 1, numFrets)
+  }
+
+  chordNotes.slice(1).forEach(note => {
+    let noteIndex = findNote(note, startFret, rootIndex + 1, lowToHigh.slice(rootIndex + 1))
+
+    if (noteIndex == -1) {
+      console.log('note not found', note)
+      return Place(chordName, chordNotes, startFret + 1, numFrets)
+    }
+  })
+
+  console.log('result', res)
+
+  let it = res.values()
+  let v = it.next()
+  let positions = []
+  while (!v.done) {
+    let { gstring, fret, strum } = v.value
+    if (startFret > 1) {
+      fret = fret - startFret + 1
+    }
+    positions.push({ gstring: 6 - gstring, fret: fret, strum: strum ?? true })
+    v = it.next()
+  }
+
+  return { name: chordName, startingFret: startFret, positions: positions }
 }
