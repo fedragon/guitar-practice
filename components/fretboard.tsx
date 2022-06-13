@@ -52,7 +52,7 @@ function drawFrets(numFrets: number, startingFret: number, offset: number, width
   let content = []
 
   for (let index = 1; index < numFrets + 1; index++) {
-    let start = startingFret + index - 1
+    let start = (startingFret == 0 ? 1 : startingFret) + index - 1
     let x = offset + width / numFrets * index
 
     if (start % 2 == 1 && start > 1 && start < 11) {
@@ -63,7 +63,7 @@ function drawFrets(numFrets: number, startingFret: number, offset: number, width
           key={"fret-dot-cx" + cx + "cy" + cy}
           cx={cx}
           cy={offset + cy * 3}
-          r={width / numFrets * 0.15}
+          r={width / numFrets * 0.125}
           stroke={"grey"}
           strokeWidth={2}
           fill={"grey"} />
