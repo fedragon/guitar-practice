@@ -1,11 +1,4 @@
-import { AllNotes } from "./notes"
-
-export interface ChordSpec {
-  name: string
-  startingFret: number
-  root: string
-  type: string
-}
+import {AllNotes} from "./notes"
 
 export interface Chord {
   name: string
@@ -21,23 +14,6 @@ export interface Chord {
     strum?: boolean
   }[]
 }
-
-export const AllChords: ChordSpec[] = [
-  { name: "A", startingFret: 0, root: "A", type: "major" },
-  { name: "Am", startingFret: 0, root: "A", type: "minor" },
-  { name: "B", startingFret: 2, root: "B", type: "major" },
-  { name: "Bm", startingFret: 2, root: "B", type: "minor" },
-  { name: "C", startingFret: 0, root: "C", type: "major" },
-  { name: "Cm", startingFret: 3, root: "C", type: "minor" },
-  { name: "D", startingFret: 0, root: "D", type: "major" },
-  { name: "Dm", startingFret: 0, root: "D", type: "minor" },
-  { name: "E", startingFret: 0, root: "E", type: "major" },
-  { name: "Em", startingFret: 0, root: "E", type: "minor" },
-  { name: "F", startingFret: 1, root: "F", type: "major" },
-  { name: "Fm", startingFret: 1, root: "F", type: "minor" },
-  { name: "G", startingFret: 0, root: "G", type: "major" },
-  { name: "Gm", startingFret: 3, root: "G", type: "minor" },
-]
 
 const notes = AllNotes.map(n => n.name)
 const lowToHigh = [
@@ -92,7 +68,7 @@ export function Place(
   chordNotes: string[],
   startFret: number,
   numFrets: number
-): Chord {
+): undefined | Chord {
   let res = new Map()
     .set("E", { gstring: 0, fret: 0, strum: false })
     .set("A", { gstring: 1, fret: 0, strum: false })
@@ -133,7 +109,12 @@ export function Place(
 
   if (rootIndex == -1) {
     console.log('root not found', chordNotes[0])
-    return Place(chordName, chordNotes, startFret + 1, numFrets)
+
+    if(startFret + numFrets <= 12) {
+      return Place(chordName, chordNotes, startFret + 1, numFrets)
+    }
+
+    return undefined
   }
 
   chordNotes.slice(1).forEach(note => {
@@ -141,7 +122,12 @@ export function Place(
 
     if (noteIndex == -1) {
       console.log('note not found', note)
-      return Place(chordName, chordNotes, startFret + 1, numFrets)
+
+      if(startFret + numFrets <= 12) {
+        return Place(chordName, chordNotes, startFret + 1, numFrets)
+      }
+
+      return undefined
     }
   })
 

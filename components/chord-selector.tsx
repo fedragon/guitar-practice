@@ -1,42 +1,77 @@
-import { useState } from 'react'
-import { Button, ButtonGroup, Stack } from 'react-bootstrap'
-import { AllChords, Chord, ChordSpec, Major, Minor, Place } from '../lib/chords'
+import {useEffect, useState} from 'react'
+import {Button, ButtonGroup, Stack} from 'react-bootstrap'
+import {Chord, Major, Minor, Place} from '../lib/chords'
 import Fretboard from '../components/fretboard'
-
-const defaultChord: Chord =
-  Place(AllChords[0].name, Major(AllChords[0].root), AllChords[0].startingFret, 3)
+import {AllNotes} from "../lib/notes";
 
 export function ChordSelector() {
-  const [chord, setChord] = useState(defaultChord)
+  const [note, setNote] = useState("A")
+  const [type, setType] = useState("major")
+  const [fret, setFret] = useState(0)
+  const [chord, setChord] = useState(Place(note, ["A", "C", "E"], fret, 3))
 
-  let doChord = function (x: ChordSpec) {
+  useEffect(() => {
     let chord: Chord
 
-    if (x.type === 'major') {
-      chord = Place(x.name, Major(x.root), x.startingFret, 3)
-    } else if (x.type === "minor") {
-      chord = Place(x.name, Minor(x.root), x.startingFret, 3)
+    if (type === 'major') {
+      chord = Place("", Major(note), fret, 3)
+    } else if (type === "minor") {
+      chord = Place("", Minor(note), fret, 3)
     }
-    console.log('chord', chord)
-    setChord(chord)
-  }
+
+    if(chord !== undefined) {
+      setChord(chord)
+    }
+  }, [note, type, fret])
 
   return (
-    <Stack>
+    <Stack gap={1}>
       <ButtonGroup>
-        {AllChords.map(function (x: ChordSpec) {
+        {AllNotes.map(x => {
           return (
             <Button
-              key={x.name}
+              key={"notes-" + x.name}
               variant={"outline-primary"}
               size={"sm"}
-              onClick={() => doChord(x)}>
+              active={note === x.name}
+              onClick={() => setNote(x.name)}>
               {x.name}
             </Button>
           )
         })}
       </ButtonGroup>
-      <Fretboard key={"fretboard"} config={{ fretWidth: 90, fretsNumber: 4 }} notes={chord} />
+      <ButtonGroup>
+        <Button
+          key={"chord-major"}
+          variant={"outline-secondary"}
+          size={"sm"}
+          active={type === "major"}
+          onClick={() => setType("major")}>
+          maj
+        </Button>
+        <Button
+          key={"chord-minor"}
+          variant={"outline-secondary"}
+          size={"sm"}
+          active={type === "minor"}
+          onClick={() => setType("minor")}>
+          min
+        </Button>
+      </ButtonGroup>
+      <ButtonGroup>
+        {Array.from(Array(13).keys()).map(function (x: number) {
+          return (
+            <Button
+              key={"fret-" + x}
+              variant={"outline-secondary"}
+              size={"sm"}
+              active={fret === x}
+              onClick={() => setFret(x)}>
+              {x}
+            </Button>)
+        })}
+      </ButtonGroup>
+      <Fretboard key={"fretboard"} config={{fretWidth: 90, fretsNumber: 4}} notes={chord}/>
     </Stack>
   )
 }
