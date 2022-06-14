@@ -1,59 +1,4 @@
-import {findNote, lowToHigh, Place} from "./chords";
-import {Position} from "./types";
-
-describe("Notes are assigned to their respective positions on each string", () => {
-    test("A", () => {
-        let res = new Map<string, Position>()
-        let stringIndex = findNote("A", {startFret: 0, numFrets: 12, stringOffset: 0, strings: lowToHigh}, res);
-
-        expect(stringIndex).toBe(0)
-        expect(res.get("E")).toStrictEqual({gstring: 0, fret: 5, strum: true})
-        expect(res.get("A")).toStrictEqual({gstring: 1, fret: 0, strum: true})
-        expect(res.get("D")).toStrictEqual({gstring: 2, fret: 7, strum: true})
-        expect(res.get("G")).toStrictEqual({gstring: 3, fret: 2, strum: true})
-        expect(res.get("B")).toStrictEqual({gstring: 4, fret: 10, strum: true})
-        expect(res.get("e")).toStrictEqual({gstring: 5, fret: 5, strum: true})
-    })
-
-    test("C", () => {
-        let res = new Map<string, Position>()
-        let stringIndex = findNote("C", {startFret: 0, numFrets: 12, stringOffset: 0, strings: lowToHigh}, res);
-
-        expect(stringIndex).toBe(0)
-        expect(res.get("E")).toStrictEqual({gstring: 0, fret: 8, strum: true})
-        expect(res.get("A")).toStrictEqual({gstring: 1, fret: 3, strum: true})
-        expect(res.get("D")).toStrictEqual({gstring: 2, fret: 10, strum: true})
-        expect(res.get("G")).toStrictEqual({gstring: 3, fret: 5, strum: true})
-        expect(res.get("B")).toStrictEqual({gstring: 4, fret: 1, strum: true})
-        expect(res.get("e")).toStrictEqual({gstring: 5, fret: 8, strum: true})
-    })
-
-    test("E", () => {
-        let res = new Map<string, Position>()
-        let stringIndex = findNote("E", {startFret: 0, numFrets: 12, stringOffset: 0, strings: lowToHigh}, res);
-
-        expect(stringIndex).toBe(0)
-        expect(res.get("E")).toStrictEqual({gstring: 0, fret: 0, strum: true})
-        expect(res.get("A")).toStrictEqual({gstring: 1, fret: 7, strum: true})
-        expect(res.get("D")).toStrictEqual({gstring: 2, fret: 2, strum: true})
-        expect(res.get("G")).toStrictEqual({gstring: 3, fret: 9, strum: true})
-        expect(res.get("B")).toStrictEqual({gstring: 4, fret: 5, strum: true})
-        expect(res.get("e")).toStrictEqual({gstring: 5, fret: 0, strum: true})
-    })
-
-    test("G#", () => {
-        let res = new Map<string, Position>()
-        let stringIndex = findNote("G#", {startFret: 0, numFrets: 12, stringOffset: 0, strings: lowToHigh}, res);
-
-        expect(stringIndex).toBe(0)
-        expect(res.get("E")).toStrictEqual({gstring: 0, fret: 4, strum: true})
-        expect(res.get("A")).toStrictEqual({gstring: 1, fret: 11, strum: true})
-        expect(res.get("D")).toStrictEqual({gstring: 2, fret: 6, strum: true})
-        expect(res.get("G")).toStrictEqual({gstring: 3, fret: 1, strum: true})
-        expect(res.get("B")).toStrictEqual({gstring: 4, fret: 9, strum: true})
-        expect(res.get("e")).toStrictEqual({gstring: 5, fret: 4, strum: true})
-    })
-})
+import {Place} from "./chords";
 
 describe("Placing a chord", () => {
     test("Returns undefined when not all notes are placed", () => {
@@ -65,14 +10,84 @@ describe("Placing a chord", () => {
             "name": "C",
             "startingFret": 3,
             "positions": [
-                {"fret": 0, "gstring": 6, "strum": false},
-                {"fret": 1, "gstring": 5, "strum": true},
-                {"fret": 3, "gstring": 4, "strum": true},
-                {"fret": 3, "gstring": 3, "strum": true},
-                {"fret": 3, "gstring": 2, "strum": true},
-                {"fret": 1, "gstring": 1, "strum": true}
+                {"gstring": 6, "fret": 0, "strum": false},
+                {"gstring": 5, "fret": 1, "strum": true},
+                {"gstring": 4, "fret": 3, "strum": true},
+                {"gstring": 3, "fret": 3, "strum": true},
+                {"gstring": 2, "fret": 3, "strum": true},
+                {"gstring": 1, "fret": 1, "strum": true}
             ],
         }
         expect(Place("C", ["C", "E", "G"], 3, 3)).toStrictEqual(expected)
+    })
+})
+
+describe("Notes are placed according to the R5R35R form, when possible", () => {
+    test("A", () => {
+        let result = Place("A", ["A", "C#", "E"], 0, 3)
+        let expected = {
+            "name": "A",
+            "startingFret": 0,
+            "positions": [
+                {"gstring": 6, "fret": 0, "strum": false},
+                {"gstring": 5, "fret": 0, "strum": true},
+                {"gstring": 4, "fret": 2, "strum": true},
+                {"gstring": 3, "fret": 2, "strum": true},
+                {"gstring": 2, "fret": 2, "strum": true},
+                {"gstring": 1, "fret": 0, "strum": true},
+            ],
+        }
+        expect(result).toStrictEqual(expected)
+    })
+
+    test("D", () => {
+        let result = Place("D", ["D", "F#", "A"], 0, 3)
+        let expected = {
+            "name": "D",
+            "startingFret": 0,
+            "positions": [
+                {"gstring": 6, "fret": 0, "strum": false},
+                {"gstring": 5, "fret": 0, "strum": false},
+                {"gstring": 4, "fret": 0, "strum": true},
+                {"gstring": 3, "fret": 2, "strum": true},
+                {"gstring": 2, "fret": 3, "strum": true},
+                {"gstring": 1, "fret": 2, "strum": true},
+            ],
+        }
+        expect(result).toStrictEqual(expected)
+    })
+
+    test("F", () => {
+        let result = Place("F", ["F", "A", "C"], 0, 3)
+        let expected = {
+            "name": "F",
+            "startingFret": 0,
+            "positions": [
+                {"gstring": 6, "fret": 1, "strum": true},
+                {"gstring": 5, "fret": 3, "strum": true},
+                {"gstring": 4, "fret": 3, "strum": true},
+                {"gstring": 3, "fret": 2, "strum": true},
+                {"gstring": 2, "fret": 1, "strum": true},
+                {"gstring": 1, "fret": 1, "strum": true},
+            ],
+        }
+        expect(result).toStrictEqual(expected)
+    })
+
+    test("G", () => {
+        let result = Place("G", ["G", "B", "D"], 0, 3)
+        let expected = {
+            "name": "G",
+            "startingFret": 0,
+            "positions": [
+                {"gstring": 6, "fret": 3, "strum": true},
+                {"gstring": 5, "fret": 2, "strum": true},
+                {"gstring": 4, "fret": 0, "strum": true},
+                {"gstring": 3, "fret": 0, "strum": true},
+                {"gstring": 2, "fret": 0, "strum": true},
+                {"gstring": 1, "fret": 3, "strum": true},
+            ],
+        }
+        expect(result).toStrictEqual(expected)
     })
 })

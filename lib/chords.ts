@@ -50,6 +50,7 @@ interface Context {
     numFrets: number
     stringOffset: number
     strings: { name: string, notes: string[] }[]
+    canSkipString?: boolean
 }
 
 export function AllPlacements(
@@ -69,99 +70,6 @@ export function AllPlacements(
     }
 
     return res
-}
-
-export function Place(
-    chordName: string,
-    chordNotes: string[],
-    startFret: number,
-    numFrets: number
-): undefined | GroupOfNotes {
-    let res = new Map<string, Position>()
-        .set("E", {gstring: 0, fret: 0, strum: false})
-        .set("A", {gstring: 1, fret: 0, strum: false})
-        .set("D", {gstring: 2, fret: 0, strum: false})
-        .set("G", {gstring: 3, fret: 0, strum: false})
-        .set("B", {gstring: 4, fret: 0, strum: false})
-        .set("e", {gstring: 5, fret: 0, strum: false})
-
-    let ctx = {startFret, numFrets, stringOffset: 0, strings: lowToHigh}
-
-    let rootIndex = findNote(chordNotes[0], ctx, res)
-
-    if (rootIndex === -1) {
-        console.log('root not found', chordNotes[0])
-
-        return undefined
-    }
-
-    console.log('root note found at string', rootIndex)
-
-    let found = true
-    chordNotes.slice(1).forEach(note => {
-        let noteIndex = findNote(note, {
-            startFret,
-            numFrets,
-            stringOffset: rootIndex + 1,
-            strings: lowToHigh.slice(rootIndex + 1)
-        }, res)
-
-        if (noteIndex === -1) {
-            console.log('note not found', note)
-
-            found = false
-            return
-        }
-
-        console.log('note found at string', rootIndex)
-    })
-
-    if (!found) {
-        return undefined
-    }
-
-    console.log('result', res)
-
-    let it = res.values()
-    let v = it.next()
-    let positions = []
-    while (!v.done) {
-        let {gstring, fret, strum} = v.value
-        if (startFret > 1 && fret > 0) {
-            fret = fret - startFret + 1
-        }
-        positions.push({gstring: 6 - gstring, fret: fret, strum: strum ?? true})
-        v = it.next()
-    }
-
-    return withBarre({name: chordName, startingFret: startFret, positions: positions})
-}
-
-export function findNote(note: string, context: Context, acc: Map<string, Position>): number {
-    let stringIx = -1
-    let {startFret, numFrets, stringOffset, strings} = context
-
-    for (let ix = 0; ix < strings.length; ix++) {
-        let s = strings[ix]
-        let pos = s.notes.indexOf(note)
-
-        if (acc.has(s.name)) {
-            if (acc.get(s.name).strum ?? false) {
-                console.log('already assigned, skipping', stringOffset + ix, note, s, acc.get(s.name))
-                continue
-            }
-        }
-
-        if (pos >= startFret && pos <= startFret + numFrets) {
-            if (stringIx === -1) {
-                stringIx = stringOffset + ix
-            }
-            acc.set(s.name, {gstring: stringOffset + ix, fret: pos, strum: true})
-            console.log('findNote', note, 's', s, 'string.ix', ix, 'final.ix', (stringOffset + ix), 'pos', pos, 'max', startFret + numFrets, 'result', acc)
-        }
-    }
-
-    return stringIx
 }
 
 function withBarre(chord: GroupOfNotes): GroupOfNotes {
@@ -205,4 +113,139 @@ function withBarre(chord: GroupOfNotes): GroupOfNotes {
     }
 
     return chord
+}
+
+interface ChordForm {
+    name: string
+    notes: { name: string, required: boolean }[]
+}
+
+// E, A, D forms
+function r5r35r(name: string, notes: string[]): ChordForm {
+    let [root, third, fifth] = notes
+
+    return {
+        name: "R-5-R-3-(5)-(R)",
+        notes: [
+            {name: root, required: true},
+            {name: fifth, required: true},
+            {name: root, required: true},
+            {name: third, required: true},
+            {name: fifth, required: false},
+            {name: root, required: false},
+        ]
+    }
+}
+
+// C, G forms
+function r35r3r(name: string, notes: string[]): ChordForm {
+    let [root, third, fifth] = notes
+
+    return {
+        name: "R-3-5-(R)-(3)-(R)",
+        notes: [
+            {name: root, required: true},
+            {name: third, required: true},
+            {name: fifth, required: true},
+            {name: root, required: false},
+            {name: third, required: false},
+            {name: root, required: false},
+        ]
+    }
+}
+
+function place(chordName: string, chordNotes: string[], startFret: number, numFrets: number, form: ChordForm) {
+    let res = new Map<string, Position>()
+        .set("E", {gstring: 0, fret: 0, strum: false})
+        .set("A", {gstring: 1, fret: 0, strum: false})
+        .set("D", {gstring: 2, fret: 0, strum: false})
+        .set("G", {gstring: 3, fret: 0, strum: false})
+        .set("B", {gstring: 4, fret: 0, strum: false})
+        .set("e", {gstring: 5, fret: 0, strum: false})
+    let allFound = true
+    let offset = 0
+    let ctx = {startFret, numFrets, stringOffset: offset, strings: lowToHigh, canSkipString: true}
+
+    console.log('attempting to place chord', chordName, 'form', form)
+
+    form.notes.forEach(note => {
+        let placement = findNote(note.name, ctx)
+
+        if (placement === undefined) {
+            console.log('note NOT found', note, 'required', note.required, 'stringOffset', offset)
+
+            if (note.required) {
+                allFound = false
+                return
+            }
+        } else {
+            console.log('note found', note, 'at', placement)
+            res.set(placement.stringName, placement.position)
+            ctx.stringOffset = placement.position.gstring + 1
+            ctx.strings = lowToHigh.slice(placement.position.gstring + 1)
+            ctx.canSkipString = false
+        }
+    })
+
+    if (!allFound) {
+        return undefined
+    }
+
+    let it = res.values()
+    let v = it.next()
+    let positions = []
+    while (!v.done) {
+        let {gstring, fret, strum} = v.value
+        if (startFret > 1 && fret > 0) {
+            fret = fret - startFret + 1
+        }
+        positions.push({gstring: 6 - gstring, fret: fret, strum: strum ?? true})
+        v = it.next()
+    }
+
+    return {name: chordName, startingFret: startFret, positions: positions}
+}
+
+export function Place(
+    chordName: string,
+    chordNotes: string[],
+    startFret: number,
+    numFrets: number
+): undefined | GroupOfNotes {
+    let notes = place(chordName, chordNotes, startFret, numFrets, r5r35r(chordName, chordNotes))
+    if (notes === undefined) {
+        notes = place(chordName, chordNotes, startFret, numFrets, r35r3r(chordName, chordNotes))
+    }
+
+    return notes
+}
+
+export function findNote(
+    note: string,
+    context: Context
+): undefined | {
+    stringName: string,
+    position: Position
+} {
+    let {startFret, numFrets, stringOffset, strings, canSkipString} = context
+    if (canSkipString) {
+        for (let ix = 0; ix < strings.length; ix++) {
+            let s = strings[ix]
+            let pos = s.notes.indexOf(note)
+
+            if (pos >= startFret && pos <= startFret + numFrets) {
+                return {stringName: s.name, position: {gstring: stringOffset + ix, fret: pos, strum: true}}
+            }
+        }
+    } else {
+        if (strings.length > 0) {
+            let pos = strings[0].notes.indexOf(note)
+
+            if (pos >= startFret && pos <= startFret + numFrets) {
+                return {stringName: strings[0].name, position: {gstring: stringOffset, fret: pos, strum: true}}
+            }
+        }
+    }
+
+    return undefined
 }

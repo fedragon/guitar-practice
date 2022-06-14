@@ -10,8 +10,8 @@ export function ChordSelector() {
     const [type, setType] = useState("major")
     const [fret, setFret] = useState(0)
     const [inversion, setInversion] = useState(0)
-    const [placements, setPlacements] = useState<{fret: number, notes: GroupOfNotes}[]>([])
-    const [chord, setChord] = useState(Place(root, ["A", "C", "E"], fret, 3))
+    const [placements, setPlacements] = useState<{ fret: number, notes: GroupOfNotes }[]>([])
+    const [chord, setChord] = useState(Place(root, Major("A"), fret, 3))
 
     useEffect(() => {
         let notes: string[]
@@ -39,6 +39,7 @@ export function ChordSelector() {
 
         console.log('chord notes', notes)
         setPlacements(AllPlacements(name, notes, 0, 3))
+        setFret(0)
     }, [root, type, inversion])
 
     useEffect(() => {
@@ -47,7 +48,7 @@ export function ChordSelector() {
         if (ch !== undefined) {
             setChord(ch.notes)
         }
-    }, [fret])
+    }, )
 
     return (
         <Stack gap={1}>
@@ -74,41 +75,41 @@ export function ChordSelector() {
                     onClick={() => setType("major")}>
                     maj
                 </Button>
-                <Button
-                    key={"chord-minor"}
-                    variant={"outline-primary"}
-                    size={"sm"}
-                    active={type === "minor"}
-                    onClick={() => setType("minor")}>
-                    min
-                </Button>
+                {/*<Button*/}
+                {/*    key={"chord-minor"}*/}
+                {/*    variant={"outline-primary"}*/}
+                {/*    size={"sm"}*/}
+                {/*    active={type === "minor"}*/}
+                {/*    onClick={() => setType("minor")}>*/}
+                {/*    min*/}
+                {/*</Button>*/}
             </ButtonGroup>
-            <ButtonGroup>
-                <Button
-                    key={"inversion-root"}
-                    variant={"outline-primary"}
-                    size={"sm"}
-                    active={inversion === 0}
-                    onClick={() => setInversion(0)}>
-                    {"root"}
-                </Button>
-                <Button
-                    key={"inversion-1st"}
-                    variant={"outline-primary"}
-                    size={"sm"}
-                    active={inversion === 1}
-                    onClick={() => setInversion(1)}>
-                    {"1st"}
-                </Button>
-                <Button
-                    key={"inversion-2nd"}
-                    variant={"outline-primary"}
-                    size={"sm"}
-                    active={inversion === 2}
-                    onClick={() => setInversion(2)}>
-                    {"2nd"}
-                </Button>
-            </ButtonGroup>
+            {/*<ButtonGroup>*/}
+            {/*    <Button*/}
+            {/*        key={"inversion-root"}*/}
+            {/*        variant={"outline-primary"}*/}
+            {/*        size={"sm"}*/}
+            {/*        active={inversion === 0}*/}
+            {/*        onClick={() => setInversion(0)}>*/}
+            {/*        {"root"}*/}
+            {/*    </Button>*/}
+            {/*    <Button*/}
+            {/*        key={"inversion-1st"}*/}
+            {/*        variant={"outline-primary"}*/}
+            {/*        size={"sm"}*/}
+            {/*        active={inversion === 1}*/}
+            {/*        onClick={() => setInversion(1)}>*/}
+            {/*        {"1st"}*/}
+            {/*    </Button>*/}
+            {/*    <Button*/}
+            {/*        key={"inversion-2nd"}*/}
+            {/*        variant={"outline-primary"}*/}
+            {/*        size={"sm"}*/}
+            {/*        active={inversion === 2}*/}
+            {/*        onClick={() => setInversion(2)}>*/}
+            {/*        {"2nd"}*/}
+            {/*    </Button>*/}
+            {/*</ButtonGroup>*/}
             <ButtonGroup>
                 {placements.map(p => p.fret).map(function (x: number) {
                     return (
