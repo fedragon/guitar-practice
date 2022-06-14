@@ -117,20 +117,7 @@ function drawStrings(off: number, base: number, width: number) {
 
 function placeNotes(
   numFrets: number,
-  notes: {
-    name: string,
-    startingFret?: number,
-    barre?: {
-      fret: number,
-      fromString: number,
-      toString: number,
-    },
-    positions: {
-      gstring: number,
-      fret: number,
-      strum?: boolean
-    }[]
-  },
+  notes: GroupOfNotes,
   offset: number,
   base: number,
   width: number,
@@ -199,7 +186,7 @@ function placeNotes(
           } else if (row.fret == 1) {
             cx = offset + width / numFrets / 2
           } else if (row.fret > 1) {
-            let a = x * row.fret
+            let a = x * (row.fret - notes.startingFret ?? 0)
             cx = offset + a - x / 2
           }
 

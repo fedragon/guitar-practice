@@ -18,7 +18,7 @@ function notesFor(note: string) {
         return []
     }
 
-    if (ix == 0) {
+    if (ix === 0) {
         return notes
     }
 
@@ -56,6 +56,25 @@ interface Context {
     strings: { name: string, notes: string[] }[]
 }
 
+export function AllPlacements(
+    chordName: string,
+    chordNotes: string[],
+    startFret: number,
+    numFrets: number
+): { fret: number, notes: GroupOfNotes}[] {
+    let res = []
+
+    for (let fret = startFret; fret + numFrets <= 12; fret++) {
+        let chord = Place(chordName, chordNotes, fret, numFrets)
+
+        if (chord !== undefined) {
+            res.push({fret, notes: chord})
+        }
+    }
+
+    return res
+}
+
 export function Place(
     chordName: string,
     chordNotes: string[],
@@ -70,22 +89,17 @@ export function Place(
         .set("B", {gstring: 4, fret: 0, strum: false})
         .set("e", {gstring: 5, fret: 0, strum: false})
 
-    console.log('chord notes', chordNotes)
-
     let ctx = {startFret, numFrets, stringOffset: 0, strings: lowToHigh}
 
     let rootIndex = findNote(chordNotes[0], ctx, res)
-    console.log('root.gstring', rootIndex)
 
-    if (rootIndex == -1) {
+    if (rootIndex === -1) {
         console.log('root not found', chordNotes[0])
-
-        if (startFret + numFrets <= 12) {
-            return Place(chordName, chordNotes, startFret + 1, numFrets)
-        }
 
         return undefined
     }
+
+    console.log('root note found at string', rootIndex)
 
     chordNotes.slice(1).forEach(note => {
         let noteIndex = findNote(note, {
@@ -95,15 +109,13 @@ export function Place(
             strings: lowToHigh.slice(rootIndex + 1)
         }, res)
 
-        if (noteIndex == -1) {
+        if (noteIndex === -1) {
             console.log('note not found', note)
-
-            if (startFret + numFrets <= 12) {
-                return Place(chordName, chordNotes, startFret + 1, numFrets)
-            }
 
             return undefined
         }
+
+        console.log('note found at string', rootIndex)
     })
 
     console.log('result', res)
@@ -139,11 +151,11 @@ function findNote(note: string, context: Context, acc: Map<string, Position>): n
         }
 
         if (pos >= startFret && pos <= startFret + numFrets) {
-            if (stringIx == -1) {
+            if (stringIx === -1) {
                 stringIx = stringOffset + ix
             }
-            acc.set(s.name, {gstring: stringOffset + ix, fret: pos, strum: true})
-            console.log('findNote', note, 's', s, 'string.ix', ix, 'final.ix', (stringOffset + ix), 'pos', pos, 'result', acc)
+            acc.set(s.name, {gstring: stringOffset + ix, fret: startFret + pos, strum: true})
+            console.log('findNote', note, 's', s, 'string.ix', ix, 'final.ix', (stringOffset + ix), 'pos', startFret + pos, 'result', acc)
         }
     }
 
@@ -161,7 +173,7 @@ function withBarre(chord: GroupOfNotes): GroupOfNotes {
                 minFret = p.fret
             }
 
-            if (existing == undefined) {
+            if (existing === undefined) {
                 byFret.set(p.fret, [p.gstring])
             } else {
                 existing.push(p.gstring)
@@ -172,7 +184,7 @@ function withBarre(chord: GroupOfNotes): GroupOfNotes {
     console.log('byFret', byFret, 'minFret', minFret)
 
     let barrePositions = byFret.get(minFret)
-    if (barrePositions.length > 1 && minFret == 1 && byFret.size > 1) {
+    if (barrePositions.length > 1 && minFret - chord.startingFret === 1 && byFret.size > 1) {
         barrePositions.sort()
 
         let positions = []
