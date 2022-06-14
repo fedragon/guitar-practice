@@ -186,7 +186,7 @@ function placeNotes(
           } else if (row.fret == 1) {
             cx = offset + width / numFrets / 2
           } else if (row.fret > 1) {
-            let a = x * (row.fret - notes.startingFret ?? 0)
+            let a = x * row.fret
             cx = offset + a - x / 2
           }
 
