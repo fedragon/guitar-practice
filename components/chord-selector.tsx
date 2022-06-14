@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react'
 import {Button, ButtonGroup, Stack} from 'react-bootstrap'
-import {Major, Minor, Place} from '../lib/chords'
+import {AllPlacements, Major, Minor, Place} from '../lib/chords'
 import Fretboard from '../components/fretboard'
 import {AllNotes} from "../lib/notes";
 import {GroupOfNotes} from "../lib/types";
@@ -10,12 +10,12 @@ export function ChordSelector() {
     const [type, setType] = useState("major")
     const [fret, setFret] = useState(0)
     const [inversion, setInversion] = useState(0)
+    const [placements, setPlacements] = useState<{fret: number, notes: GroupOfNotes}[]>([])
     const [chord, setChord] = useState(Place(root, ["A", "C", "E"], fret, 3))
 
     useEffect(() => {
         let notes: string[]
         let name: string
-        let chord: GroupOfNotes
 
         if (type === 'major') {
             notes = Major(root)
@@ -37,14 +37,17 @@ export function ChordSelector() {
                 break
         }
 
-        console.log('######## notes', notes)
+        console.log('chord notes', notes)
+        setPlacements(AllPlacements(name, notes, 0, 3))
+    }, [root, type, inversion])
 
-        chord = Place(name, notes, fret, 3)
+    useEffect(() => {
+        let ch = placements.find(p => p.fret === fret)
 
-        if (chord !== undefined) {
-            setChord(chord)
+        if (ch !== undefined) {
+            setChord(ch.notes)
         }
-    }, [root, type, fret, inversion])
+    }, [fret])
 
     return (
         <Stack gap={1}>
@@ -107,7 +110,7 @@ export function ChordSelector() {
                 </Button>
             </ButtonGroup>
             <ButtonGroup>
-                {Array.from(Array(13).keys()).map(function (x: number) {
+                {placements.map(p => p.fret).map(function (x: number) {
                     return (
                         <Button
                             key={"fret-" + x}
