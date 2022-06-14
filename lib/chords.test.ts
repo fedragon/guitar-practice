@@ -1,4 +1,4 @@
-import {findNote, lowToHigh} from "./chords";
+import {findNote, lowToHigh, Place} from "./chords";
 import {Position} from "./types";
 
 describe("Notes are assigned to their respective positions on each string", () => {
@@ -52,5 +52,27 @@ describe("Notes are assigned to their respective positions on each string", () =
         expect(res.get("G")).toStrictEqual({gstring: 3, fret: 1, strum: true})
         expect(res.get("B")).toStrictEqual({gstring: 4, fret: 9, strum: true})
         expect(res.get("e")).toStrictEqual({gstring: 5, fret: 4, strum: true})
+    })
+})
+
+describe("Placing a chord", () => {
+    test("Returns undefined when not all notes are placed", () => {
+        expect(Place("C", ["C", "E", "G"], 4, 3)).toBeUndefined()
+    })
+
+    test("returns a set of placements when all notes are placed", () => {
+        let expected = {
+            "name": "C",
+            "startingFret": 3,
+            "positions": [
+                {"fret": 0, "gstring": 6, "strum": false},
+                {"fret": 1, "gstring": 5, "strum": true},
+                {"fret": 3, "gstring": 4, "strum": true},
+                {"fret": 3, "gstring": 3, "strum": true},
+                {"fret": 3, "gstring": 2, "strum": true},
+                {"fret": 1, "gstring": 1, "strum": true}
+            ],
+        }
+        expect(Place("C", ["C", "E", "G"], 3, 3)).toStrictEqual(expected)
     })
 })

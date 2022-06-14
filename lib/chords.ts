@@ -127,7 +127,7 @@ export function Place(
     let positions = []
     while (!v.done) {
         let {gstring, fret, strum} = v.value
-        if (startFret > 1) {
+        if (startFret > 1 && fret > 0) {
             fret = fret - startFret + 1
         }
         positions.push({gstring: 6 - gstring, fret: fret, strum: strum ?? true})
