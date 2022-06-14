@@ -2,7 +2,7 @@ import {AllNotes} from "./notes"
 import {GroupOfNotes, Position} from "./types";
 
 const notes = AllNotes.map(n => n.name)
-const lowToHigh = [
+export const lowToHigh = [
     {name: "E", notes: notesFor("E")},
     {name: "A", notes: notesFor("A")},
     {name: "D", notes: notesFor("D")},
@@ -26,11 +26,7 @@ function notesFor(note: string) {
 }
 
 function wrap(start: number, offset: number) {
-    if (start + offset > 11) {
-        return (start + offset) % 12
-    }
-
-    return start + offset
+    return (start + offset) % 12
 }
 
 export function Major(name: string) {
@@ -61,7 +57,7 @@ export function AllPlacements(
     chordNotes: string[],
     startFret: number,
     numFrets: number
-): { fret: number, notes: GroupOfNotes}[] {
+): { fret: number, notes: GroupOfNotes }[] {
     let res = []
 
     for (let fret = startFret; fret + numFrets <= 12; fret++) {
@@ -135,7 +131,7 @@ export function Place(
     return withBarre({name: chordName, startingFret: startFret, positions: positions})
 }
 
-function findNote(note: string, context: Context, acc: Map<string, Position>): number {
+export function findNote(note: string, context: Context, acc: Map<string, Position>): number {
     let stringIx = -1
     let {startFret, numFrets, stringOffset, strings} = context
 
@@ -154,8 +150,8 @@ function findNote(note: string, context: Context, acc: Map<string, Position>): n
             if (stringIx === -1) {
                 stringIx = stringOffset + ix
             }
-            acc.set(s.name, {gstring: stringOffset + ix, fret: startFret + pos, strum: true})
-            console.log('findNote', note, 's', s, 'string.ix', ix, 'final.ix', (stringOffset + ix), 'pos', startFret + pos, 'result', acc)
+            acc.set(s.name, {gstring: stringOffset + ix, fret: pos, strum: true})
+            console.log('findNote', note, 's', s, 'string.ix', ix, 'final.ix', (stringOffset + ix), 'pos', pos, 'max', startFret + numFrets, 'result', acc)
         }
     }
 
