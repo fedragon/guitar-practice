@@ -97,6 +97,7 @@ export function Place(
 
     console.log('root note found at string', rootIndex)
 
+    let found = true
     chordNotes.slice(1).forEach(note => {
         let noteIndex = findNote(note, {
             startFret,
@@ -108,11 +109,16 @@ export function Place(
         if (noteIndex === -1) {
             console.log('note not found', note)
 
-            return undefined
+            found = false
+            return
         }
 
         console.log('note found at string', rootIndex)
     })
+
+    if (!found) {
+        return undefined
+    }
 
     console.log('result', res)
 
