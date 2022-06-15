@@ -23,16 +23,18 @@ export function ChordSelector() {
             notes = Minor(root)
         }
 
+        let suffix = type === "major" ? "" : "m"
+
         switch (inversion) {
             case 0:
-                name = notes[0] + (type === "major" ? "" : "m")
+                name = notes[0] + suffix
                 break
             case 1:
-                name = notes[0] + (type === "major" ? "" : "m") + "/" + notes[1]
+                name = notes[0] + suffix + "/" + notes[1]
                 notes = notes.slice(1).concat(notes.slice(0, 1))
                 break
             case 2:
-                name = notes[0] + (type === "major" ? "" : "m") + "/" + notes[2]
+                name = notes[0] + suffix + "/" + notes[2]
                 notes = notes.slice(2).concat(notes.slice(0, 2))
                 break
         }
@@ -75,14 +77,14 @@ export function ChordSelector() {
                     onClick={() => setType("major")}>
                     maj
                 </Button>
-                {/*<Button*/}
-                {/*    key={"chord-minor"}*/}
-                {/*    variant={"outline-primary"}*/}
-                {/*    size={"sm"}*/}
-                {/*    active={type === "minor"}*/}
-                {/*    onClick={() => setType("minor")}>*/}
-                {/*    min*/}
-                {/*</Button>*/}
+                <Button
+                    key={"chord-minor"}
+                    variant={"outline-primary"}
+                    size={"sm"}
+                    active={type === "minor"}
+                    onClick={() => setType("minor")}>
+                    min
+                </Button>
             </ButtonGroup>
             {/*<ButtonGroup>*/}
             {/*    <Button*/}
