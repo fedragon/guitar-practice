@@ -55,6 +55,7 @@ interface Context {
 
 export function AllPlacements(
     chordName: string,
+    chordRoot: string,
     chordNotes: string[],
     startFret: number,
     numFrets: number
@@ -62,7 +63,7 @@ export function AllPlacements(
     let res = []
 
     for (let fret = startFret; fret + numFrets <= 12; fret++) {
-        let chord = Place(chordName, chordNotes, fret, numFrets)
+        let chord = Place(chordName, chordRoot, chordNotes, fret, numFrets)
 
         if (chord !== undefined) {
             res.push({fret, notes: chord})
@@ -164,7 +165,7 @@ function place(chordName: string, chordNotes: string[], startFret: number, numFr
         .set("e", {gstring: 5, fret: 0, strum: false})
     let allFound = true
     let offset = 0
-    let ctx = {startFret, numFrets, stringOffset: offset, strings: lowToHigh, canSkipString: true}
+    let ctx = {startFret, numFrets, stringOffset: offset, strings: lowToHigh.slice(), canSkipString: true}
 
     console.log('attempting to place chord', chordName, 'form', form)
 
@@ -208,16 +209,24 @@ function place(chordName: string, chordNotes: string[], startFret: number, numFr
 
 export function Place(
     chordName: string,
+    chordRoot: string,
     chordNotes: string[],
     startFret: number,
     numFrets: number
 ): undefined | GroupOfNotes {
-    let notes = place(chordName, chordNotes, startFret, numFrets, r5r35r(chordName, chordNotes))
-    if (notes === undefined) {
-        notes = place(chordName, chordNotes, startFret, numFrets, r35r3r(chordName, chordNotes))
+    switch (chordRoot) {
+        case "A":
+        case "B":
+        case "D":
+        case "E":
+        case "F":
+            return place(chordName, chordNotes, startFret, numFrets, r5r35r(chordName, chordNotes))
+        case "C":
+        case "G":
+            return place(chordName, chordNotes, startFret, numFrets, r35r3r(chordName, chordNotes))
     }
 
-    return notes
+    return undefined
 }
 
 export function findNote(

@@ -22,7 +22,7 @@ describe("Placing a chord", () => {
     })
 })
 
-describe("Notes are placed according to the R5R35R form, when possible", () => {
+describe("Notes are placed according to one of the CAGED forms, when possible", () => {
     test("A", () => {
         let result = Place("A", ["A", "C#", "E"], 0, 3)
         let expected = {
@@ -48,6 +48,23 @@ describe("Notes are placed according to the R5R35R form, when possible", () => {
             "positions": [
                 {"gstring": 6, "fret": 0, "strum": false},
                 {"gstring": 5, "fret": 0, "strum": false},
+                {"gstring": 4, "fret": 0, "strum": true},
+                {"gstring": 3, "fret": 2, "strum": true},
+                {"gstring": 2, "fret": 3, "strum": true},
+                {"gstring": 1, "fret": 2, "strum": true},
+            ],
+        }
+        expect(result).toStrictEqual(expected)
+    })
+
+    test("D/F#", () => {
+        let result = Place("D/F#", ["F#", "A", "D"], 0, 3)
+        let expected = {
+            "name": "D/F#",
+            "startingFret": 0,
+            "positions": [
+                {"gstring": 6, "fret": 2, "strum": true},
+                {"gstring": 5, "fret": 0, "strum": true},
                 {"gstring": 4, "fret": 0, "strum": true},
                 {"gstring": 3, "fret": 2, "strum": true},
                 {"gstring": 2, "fret": 3, "strum": true},
