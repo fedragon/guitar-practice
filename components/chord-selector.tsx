@@ -1,56 +1,60 @@
 import {useEffect, useState} from 'react'
 import {Button, ButtonGroup, Stack} from 'react-bootstrap'
-import {AllPlacements, Major, Minor, Place} from '../lib/chords'
+import {Major, Minor, Place} from '../lib/chords'
 import Fretboard from '../components/fretboard'
 import {AllNotes} from "../lib/notes";
-import {GroupOfNotes} from "../lib/types";
+
+function invert(notes: string[], suffix: string, n: number): { name: string, notes: string[] } {
+    let name = notes[0] + suffix
+    let result = notes
+
+    if (n > 0) {
+        name += "/" + notes[n]
+        result = notes.slice(n).concat(notes.slice(0, n))
+    }
+
+    return {name: name, notes: result}
+}
 
 export function ChordSelector() {
     const [root, setRoot] = useState("A")
-    const [type, setType] = useState("major")
+    const [chords, setChords] = useState([])
+    const [chord, setChord] = useState({name: root, notes: Major(root)})
     const [fret, setFret] = useState(0)
-    const [inversion, setInversion] = useState(0)
-    const [placements, setPlacements] = useState<{ fret: number, notes: GroupOfNotes }[]>([])
-    const [chord, setChord] = useState(Place(root, Major("A"), fret, 3))
+    const [placement, setPlacement] = useState(undefined)
 
     useEffect(() => {
-        let notes: string[]
-        let name: string
+        let major = Major(root)
+        let minor = Minor(root)
 
-        if (type === 'major') {
-            notes = Major(root)
-        } else if (type === "minor") {
-            notes = Minor(root)
-        }
-
-        let suffix = type === "major" ? "" : "m"
-
-        switch (inversion) {
-            case 0:
-                name = notes[0] + suffix
-                break
-            case 1:
-                name = notes[0] + suffix + "/" + notes[1]
-                notes = notes.slice(1).concat(notes.slice(0, 1))
-                break
-            case 2:
-                name = notes[0] + suffix + "/" + notes[2]
-                notes = notes.slice(2).concat(notes.slice(0, 2))
-                break
-        }
-
-        console.log('chord notes', notes)
-        setPlacements(AllPlacements(name, notes, 0, 3))
-        setFret(0)
-    }, [root, type, inversion])
+        setChords([
+            {name: root, notes: major},
+            invert(major, "", 1),
+            invert(major, "", 2),
+            {name: root + "m", notes: minor},
+            invert(minor, "m", 1),
+            invert(minor, "m", 2),
+        ])
+    }, [root])
 
     useEffect(() => {
-        let ch = placements.find(p => p.fret === fret)
+        if (chord) {
+            let notes = Place(chord.name, chord.notes, fret, 4)
+            if (notes && notes.positions) {
+                let max = notes.positions.map(x => x.fret).reduce((prev: number, curr: number) => {
+                    return (curr > prev) ? curr : prev
+                })
 
-        if (ch !== undefined) {
-            setChord(ch.notes)
+                if (max <= 4) {
+                    setPlacement(notes)
+                } else {
+                    setPlacement(undefined)
+                }
+            } else {
+                setPlacement(undefined)
+            }
         }
-    }, )
+    }, [chord, fret])
 
     return (
         <Stack gap={1}>
@@ -69,51 +73,22 @@ export function ChordSelector() {
                 })}
             </ButtonGroup>
             <ButtonGroup>
-                <Button
-                    key={"chord-major"}
-                    variant={"outline-primary"}
-                    size={"sm"}
-                    active={type === "major"}
-                    onClick={() => setType("major")}>
-                    maj
-                </Button>
-                <Button
-                    key={"chord-minor"}
-                    variant={"outline-primary"}
-                    size={"sm"}
-                    active={type === "minor"}
-                    onClick={() => setType("minor")}>
-                    min
-                </Button>
+                {chords.map(x => {
+                    return (
+                        <Button
+                            key={"chords-" + x.name}
+                            variant={"outline-primary"}
+                            size={"sm"}
+                            active={chord.name === x.name}
+                            onClick={() => setChord(x)}>
+                            {x.name}
+                        </Button>
+                    )
+                })
+                }
             </ButtonGroup>
-            {/*<ButtonGroup>*/}
-            {/*    <Button*/}
-            {/*        key={"inversion-root"}*/}
-            {/*        variant={"outline-primary"}*/}
-            {/*        size={"sm"}*/}
-            {/*        active={inversion === 0}*/}
-            {/*        onClick={() => setInversion(0)}>*/}
-            {/*        {"root"}*/}
-            {/*    </Button>*/}
-            {/*    <Button*/}
-            {/*        key={"inversion-1st"}*/}
-            {/*        variant={"outline-primary"}*/}
-            {/*        size={"sm"}*/}
-            {/*        active={inversion === 1}*/}
-            {/*        onClick={() => setInversion(1)}>*/}
-            {/*        {"1st"}*/}
-            {/*    </Button>*/}
-            {/*    <Button*/}
-            {/*        key={"inversion-2nd"}*/}
-            {/*        variant={"outline-primary"}*/}
-            {/*        size={"sm"}*/}
-            {/*        active={inversion === 2}*/}
-            {/*        onClick={() => setInversion(2)}>*/}
-            {/*        {"2nd"}*/}
-            {/*    </Button>*/}
-            {/*</ButtonGroup>*/}
             <ButtonGroup>
-                {placements.map(p => p.fret).map(function (x: number) {
+                {Array.from(Array(13).keys()).map(x => {
                     return (
                         <Button
                             key={"fret-" + x}
@@ -122,10 +97,11 @@ export function ChordSelector() {
                             active={fret === x}
                             onClick={() => setFret(x)}>
                             {x}
-                        </Button>)
+                        </Button>
+                    )
                 })}
             </ButtonGroup>
-            <Fretboard key={"fretboard"} config={{fretWidth: 90, fretsNumber: 4}} notes={chord}/>
+            {placement && <Fretboard key={"fretboard"} config={{fretWidth: 90, fretsNumber: 4}} notes={placement}/>}
         </Stack>
     )
 }
