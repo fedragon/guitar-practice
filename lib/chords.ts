@@ -156,12 +156,12 @@ function r35r3r(name: string, notes: string[]): ChordForm {
 
 function place(chordName: string, chordNotes: string[], startFret: number, numFrets: number, form: ChordForm) {
     let res = new Map<string, Position>()
-        .set("E", {gstring: 0, fret: 0, strum: false})
-        .set("A", {gstring: 1, fret: 0, strum: false})
-        .set("D", {gstring: 2, fret: 0, strum: false})
-        .set("G", {gstring: 3, fret: 0, strum: false})
-        .set("B", {gstring: 4, fret: 0, strum: false})
-        .set("e", {gstring: 5, fret: 0, strum: false})
+        .set("E", {gstring: 0, fret: 0, note: "E", strum: false})
+        .set("A", {gstring: 1, fret: 0, note: "A", strum: false})
+        .set("D", {gstring: 2, fret: 0, note: "D", strum: false})
+        .set("G", {gstring: 3, fret: 0, note: "G", strum: false})
+        .set("B", {gstring: 4, fret: 0, note: "B", strum: false})
+        .set("e", {gstring: 5, fret: 0, note: "E", strum: false})
     let allFound = true
     let offset = 0
     let ctx = {startFret, numFrets, stringOffset: offset, strings: lowToHigh, canSkipString: true}
@@ -195,11 +195,11 @@ function place(chordName: string, chordNotes: string[], startFret: number, numFr
     let v = it.next()
     let positions = []
     while (!v.done) {
-        let {gstring, fret, strum} = v.value
+        let {gstring, fret, note, strum} = v.value
         if (startFret > 1 && fret > 0) {
             fret = fret - startFret + 1
         }
-        positions.push({gstring: 6 - gstring, fret: fret, strum: strum ?? true})
+        positions.push({gstring: 6 - gstring, fret: fret, note: note, strum: strum ?? true})
         v = it.next()
     }
 
@@ -234,7 +234,7 @@ export function findNote(
             let pos = s.notes.indexOf(note)
 
             if (pos >= startFret && pos <= startFret + numFrets) {
-                return {stringName: s.name, position: {gstring: stringOffset + ix, fret: pos, strum: true}}
+                return {stringName: s.name, position: {gstring: stringOffset + ix, fret: pos, note: note, strum: true}}
             }
         }
     } else {
@@ -242,7 +242,7 @@ export function findNote(
             let pos = strings[0].notes.indexOf(note)
 
             if (pos >= startFret && pos <= startFret + numFrets) {
-                return {stringName: strings[0].name, position: {gstring: stringOffset, fret: pos, strum: true}}
+                return {stringName: strings[0].name, position: {gstring: stringOffset, fret: pos, note: note, strum: true}}
             }
         }
     }
