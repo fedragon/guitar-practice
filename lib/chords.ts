@@ -53,68 +53,6 @@ interface Context {
     canSkipString?: boolean
 }
 
-export function AllPlacements(
-    chordName: string,
-    chordNotes: string[],
-    startFret: number,
-    numFrets: number
-): { fret: number, notes: GroupOfNotes }[] {
-    let res = []
-
-    for (let fret = startFret; fret + numFrets <= 12; fret++) {
-        let chord = Place(chordName, chordNotes, fret, numFrets)
-
-        if (chord !== undefined) {
-            res.push({fret, notes: chord})
-        }
-    }
-
-    return res
-}
-
-function withBarre(chord: GroupOfNotes): GroupOfNotes {
-    let byFret = new Map<number, number[]>()
-    let minFret = 99
-    chord.positions.forEach(p => {
-        if (p.fret > 0 && p.strum) {
-            let existing = byFret.get(p.fret)
-
-            if (p.fret < minFret) {
-                minFret = p.fret
-            }
-
-            if (existing === undefined) {
-                byFret.set(p.fret, [p.gstring])
-            } else {
-                existing.push(p.gstring)
-            }
-        }
-    })
-
-    console.log('byFret', byFret, 'minFret', minFret)
-
-    let barrePositions = byFret.get(minFret)
-    if (barrePositions.length > 1 && minFret - chord.startingFret === 1 && byFret.size > 1) {
-        barrePositions.sort()
-
-        let positions = []
-        chord.positions.forEach(p => {
-            if (p.fret != minFret) {
-                positions.push(p)
-            }
-        })
-
-        chord.positions = positions
-        chord.barre = {
-            fret: minFret,
-            fromString: barrePositions[0],
-            toString: barrePositions[barrePositions.length - 1],
-        }
-    }
-
-    return chord
-}
-
 interface ChordForm {
     name: string
     notes: { name: string, required: boolean }[]
